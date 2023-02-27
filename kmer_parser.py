@@ -5,13 +5,9 @@ from itertools import combinations_with_replacement
 import pandas as pd
 import numpy as np
 import hashlib
-from Bio import Phylo, AlignIO
-from sklearn.neighbors import DistanceMetric
 from matplotlib import pyplot as plt
-from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import multiprocessing as mp
 from collections import Counter
-from sklearn import svm
 import threading
 import time
 from functools import partial
@@ -132,7 +128,7 @@ if __name__ == '__main__' :
     multi_fasta = [record for record in SeqIO.parse("<db/path.fasta>", "fasta")]
     print("Perfomring Gapped k-mer count on {} sequences | parameters (k-mer size ={}; reduction = {} )".format(len(multi_fasta), k , str(reduce)))
     
-    pool = mp.Pool(processes=12)
+    pool = mp.Pool(processes=4)
 
     # map the analyze_sequence function to the sequences
     main = partial(get_kmers, kmer_size = k , reduce = reduce  , path = folder_path)
