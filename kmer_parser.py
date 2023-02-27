@@ -129,7 +129,7 @@ if __name__ == '__main__' :
 
         os.makedirs(folder_path)
 
-    multi_fasta = [record for record in SeqIO.parse("small_db.fasta", "fasta")]
+    multi_fasta = [record for record in SeqIO.parse("<db/path.fasta>", "fasta")]
     print("Perfomring Gapped k-mer count on {} sequences | parameters (k-mer size ={}; reduction = {} )".format(len(multi_fasta), k , str(reduce)))
     
     pool = mp.Pool(processes=12)
