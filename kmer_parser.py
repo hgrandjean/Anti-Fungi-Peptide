@@ -25,33 +25,26 @@ from functools import partial
 
 
 reduction_dictionnaries = {  
-    'A' :['A','A','B','B','B'] ,
-    'C' :['B','G','A','A','A'] ,
-    'D' :['B','E','C','C','A'] ,
-    'E' : ['B','E','C','C','A'] ,
-    'F' : ['B','C','A','A','A'] ,
-    'G' : ['A','A','B','B','C'] ,
-    'H' : ['B','B','B','A','A'] ,
-    'I' : ['A','A','A','B','B'] ,
-    'K' : ['B','F','C','C','A'] ,
-    'L' : ['A','A','A','B','B'] ,
-    'M' : ['A','A','A','B','B'] ,
-    'N' : ['B','D','C','A','A'] ,
-    'P' : ['B','B','C','A','C'] ,
-    'Q' : ['B','D','C','A','A'] ,
-    'R' : ['B','F','C','C','A'] ,
-    'S' : ['B','D','B','A','A'] ,
-    'T' : ['B','D','B','A','A'] ,
-    'V' : ['A','A','A','B','B'] ,
-    'W' : ['B','-','A','A','A'] ,
-    'Y' : ['B','G','A','A','A'] ,
-   #unusual amino acids
-    "X" : 'B' , 
-    "U" : 'B' ,
-    "B" : 'B' , 
-    "O" : 'B' ,
-    "X" : 'B' ,
-    "Z" : 'B' ,
+    'A' :['A','A','B','B','B', 'B'], #Alanine
+    'C' :['B','G','A','A','A', 'B'], #Cysteine
+    'D' :['B','E','C','C','A', 'N'], #Aspartic acid
+    'E' : ['B','E','C','C','A', 'N'], #Glutamic acid
+    'F' : ['B','C','A','A','A', 'B'], #Phenylalanine
+    'G' : ['A','A','B','B','C', 'B'], #Glycine
+    'H' : ['B','B','B','A','A', 'P'], #Histidine
+    'I' : ['A','A','A','B','B', 'A'], #Isoleucine
+    'K' : ['B','F','C','C','A', 'P'], #Lysine
+    'L' : ['A','A','A','B','B', 'A'], #Leucine
+    'M' : ['A','A','A','B','B', 'A'], #Methionine
+    'N' : ['B','D','C','A','A', 'U'], #Asparagine
+    'P' : ['B','B','C','A','C', 'B'], #Proline
+    'Q' : ['B','D','C','A','A', 'U'], #Glutamine
+    'R' : ['B','F','C','C','A', 'P'], #Arginine
+    'S' : ['B','D','B','A','A', 'U'], #Serine
+    'T' : ['B','D','B','A','A', 'U'], #Threonine
+    'V' : ['A','A','A','B','B', 'A'], #Valine
+    'W' : ['B','-','A','A','A', 'A'], #Tryptophan
+    'Y' : ['B','G','A','A','A', 'Y'], #Tyrosine
 }
 
 def reduce_seq(sequence, RED_dict ,r_dict = reduction_dict):
