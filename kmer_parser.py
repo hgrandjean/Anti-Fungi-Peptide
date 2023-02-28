@@ -80,10 +80,10 @@ def gap_kmer(kmers):
                 k_gap.append(kmer[:z] + "_" + kmer[z+1 :])
     return k_gap
 
-def find_kmer(sequence, kmer_size, ngap, reduce = False):
+def find_kmer(sequence, kmer_size, ngap, reduce = reduce):
     kmers = []
-    if reduce == True :
-        sequence = reduce_seq(sequence)
+    if reduce =! None :
+        sequence = reduce_seq(sequence, RED_dict = reduce)
     for i in range(len(sequence)):
         if i+ kmer_size <= len(sequence):
                 kmers .append (sequence[i:i+kmer_size])
@@ -101,7 +101,7 @@ def get_kmers(seq_record , kmer_size , reduce , path):
         for size in kmer_size :
           if size <= 2 : gap= 0 
           else : gap = size - 2 
-          kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= False )
+          kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
           for kmer in kmers : 
               save.write("".join(str(kmer + '\n')))
     save.close()
@@ -111,7 +111,7 @@ def get_kmers(seq_record , kmer_size , reduce , path):
 if __name__ == '__main__' : 
     #parameter
     k = range(3,11)    
-    reduce = False 
+    reduce = 6 
 
     folder_path = "".join(os.getcwd()+"/kmr_temp/")
 
