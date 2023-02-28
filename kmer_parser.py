@@ -53,7 +53,7 @@ reduction_dictionnaries = {
     "Z" : 'B' ,
 }
 
-def reduce_seq(sequence, r_dict = reduction_dict):
+def reduce_seq(sequence, RED_dict ,r_dict = reduction_dict):
     """ transform sequence using AA characteristics in proteins:
     __ Args __ 
     sequence (Seq): AA sequence in single letter codification 
@@ -64,7 +64,7 @@ def reduce_seq(sequence, r_dict = reduction_dict):
     """
     reduced_seq = ""
     for aa in sequence:
-        reduced_seq += r_dict[aa]
+        reduced_seq += r_dict[aa][RED_dict]
     return reduced_seq 
 
 def hash_kmer(kmer):
