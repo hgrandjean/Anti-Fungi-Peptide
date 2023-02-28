@@ -47,7 +47,7 @@ reduction_dictionnaries = {
     'Y' : ['B','G','A','A','A', 'Y'], #Tyrosine
 }
 
-def reduce_seq(sequence, RED_dict ,r_dict = reduction_dict):
+def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionnaries):
     """ transform sequence using AA characteristics in proteins:
     __ Args __ 
     sequence (Seq): AA sequence in single letter codification 
@@ -82,7 +82,7 @@ def gap_kmer(kmers):
 
 def find_kmer(sequence, kmer_size, ngap, reduce = reduce):
     kmers = []
-    if reduce =! None :
+    if reduce != None :
         sequence = reduce_seq(sequence, RED_dict = reduce)
     for i in range(len(sequence)):
         if i+ kmer_size <= len(sequence):
