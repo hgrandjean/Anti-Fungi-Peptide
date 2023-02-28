@@ -96,7 +96,6 @@ def find_kmer(sequence, kmer_size, ngap, reduce = reduce):
 
 def get_kmers(seq_record , kmer_size , reduce , path):
     record , seq = seq_record.id , seq_record.seq
-    record = "".join(record.split('|')[1]+"_"+record.split('|')[2])
     with open("".join(path+"{}.kmr".format(record)) , "w" ) as save:
         for size in kmer_size :
           if size <= 2 : gap= 0 
