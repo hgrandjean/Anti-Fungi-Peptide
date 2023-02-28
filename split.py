@@ -19,7 +19,7 @@ for kmer in negatif:
 #count of descriptors in negatif list 
 
 
-with open("unique_set.kmr" , "w") as save : 
+with open("unique_set.tsv" , "w") as save : 
     for kmer in kmers_counter.keys() : 
       save.write(kmer+'\t'+str(kmers_counter[kmer])+'\n')
       
