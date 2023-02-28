@@ -1,0 +1,15 @@
+name: antimicrobial_peptides
+channels:
+  - conda-forge
+  - bioconda 
+  - defaults
+dependencies:
+  - biopython
+  - pandas
+  - numpy
+  - hashlib
+  - sklearn
+  - matplotlib
+  
+  
+  
