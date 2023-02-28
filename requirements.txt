@@ -1,6 +1,4 @@
 biopython
 pandas
 numpy
-hashlib
-sklearn
 matplotlib
