@@ -64,7 +64,7 @@ def reduce_seq(sequence, RED_dict ,r_dict = reduction_dict):
     """
     reduced_seq = ""
     for aa in sequence:
-        reduced_seq += r_dict[aa][RED_dict]
+        reduced_seq += r_dict[aa][RED_dict - 1]
     return reduced_seq 
 
 def hash_kmer(kmer):
