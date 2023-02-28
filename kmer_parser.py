@@ -78,10 +78,9 @@ def gap_kmer(kmers):
     k_gap = []
     for kmer in kmers : 
         for z in range(0,len(kmer)) :
-            if kmer[z] != "_" : 
+            if kmer[z] != "_" :
                 k_gap.append("".join(kmer[:z] + "_" + kmer[z+1 :]))
-
-    return k_gap
+    return set(k_gap) 
 
 def find_kmer(sequence, kmer_size, ngap, reduce ):
     kmers = []
@@ -90,8 +89,11 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
     for i in range(len(sequence)):
         if i+ kmer_size <= len(sequence):
                 kmers .append (sequence[i:i+kmer_size])
+    
+    current_kmers=kmers           
     for k in range(ngap):
-        kmers+=gap_kmer(kmers)
+        current_kmers = gap_kmer(current_kmers)
+        kmers += current_kmers
     #return [hash_kmer(kmer) for kmer in kmers] 
     return kmers
 
@@ -99,15 +101,13 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
 
 def get_kmers(seq_record , kmer_size , reduce, path):
     record , seq = seq_record.id , seq_record.seq
-    with open("".join(path+"{}.kmr".format(record)) , "w" ) as save:
+    with open("".join(path+f"{record}.kmr") , "w" ) as save:
         for size in kmer_size :
-          if size <= 2 : gap= 0 
-          else : gap = size - 1 
+          if size <= 2 : gap = 0 
+          else : gap = size - 2 
           kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
           for kmer in kmers : 
               save.write("".join(str(kmer + '\n')))
-    save.close()
-
 
 
 if __name__ == '__main__' : 
@@ -122,7 +122,7 @@ if __name__ == '__main__' :
         os.makedirs(folder_path)
 
     multi_fasta = [record for record in SeqIO.parse("small_db.fasta", "fasta")]
-    print("Perfomring Gapped k-mer count on {} sequences | parameters (k-mer size ={}; reduction = {} )".format(len(multi_fasta), k , str(reduce)))
+    print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences | parameters (k-mer size = {k}; reduction = {str(reduce)} )")
     
     pool = mp.Pool(processes=4)
 
