@@ -21,5 +21,5 @@ for kmer in negatif:
 
 with open("unique_set.kmr" , "w") as save : 
     for kmer in kmers_counter.keys() : 
-      save.write(''+kmer+' '+str(kmers_counter[kmer])+'\n')
+      save.write(kmer+'\t'+str(kmers_counter[kmer])+'\n')
       
