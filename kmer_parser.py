@@ -80,7 +80,7 @@ def gap_kmer(kmers):
                 k_gap.append(kmer[:z] + "_" + kmer[z+1 :])
     return k_gap
 
-def find_kmer(sequence, kmer_size, ngap, reduce = reduce):
+def find_kmer(sequence, kmer_size, ngap, reduce ):
     kmers = []
     if reduce != None :
         sequence = reduce_seq(sequence, RED_dict = reduce)
