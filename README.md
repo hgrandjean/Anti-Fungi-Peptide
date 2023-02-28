@@ -1,5 +1,5 @@
-# Anti-Fungi-Peptide
-Bio-informatic common repository for antimicrobial peptides design 
+# Anti-Fungal-Peptide
+Bio-informatics common repository for antimicrobial peptides design 
 
 ## Setup on Windows
 
