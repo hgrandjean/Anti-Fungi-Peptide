@@ -61,6 +61,7 @@ def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionnaries):
         reduced_seq += r_dict[aa][RED_dict - 1]
     return reduced_seq 
 
+
 def hash_kmer(kmer):
     """
     Hash a k-mer using the SHA-256 algorithm
@@ -72,12 +73,14 @@ def hash_kmer(kmer):
     hashed_kmer = hashlib.sha256(kmer.encode()).hexdigest()
     return hashed_kmer
 
+
 def gap_kmer(kmers):
     k_gap = []
     for kmer in kmers : 
         for z in range(0,len(kmer)) :
             if kmer[z] != "_" : 
-                k_gap.append(kmer[:z] + "_" + kmer[z+1 :])
+                k_gap.append("".join(kmer[:z] + "_" + kmer[z+1 :]))
+
     return k_gap
 
 def find_kmer(sequence, kmer_size, ngap, reduce ):
@@ -87,19 +90,19 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
     for i in range(len(sequence)):
         if i+ kmer_size <= len(sequence):
                 kmers .append (sequence[i:i+kmer_size])
-    for i in range(ngap):
-        kmers =gap_kmer(kmers)
-    return [hash_kmer(kmer) for kmer in kmers] 
-    #return kmers
+    for k in range(ngap):
+        kmers+=gap_kmer(kmers)
+    #return [hash_kmer(kmer) for kmer in kmers] 
+    return kmers
 
 
 
-def get_kmers(seq_record , kmer_size , reduce , path):
+def get_kmers(seq_record , kmer_size , reduce, path):
     record , seq = seq_record.id , seq_record.seq
     with open("".join(path+"{}.kmr".format(record)) , "w" ) as save:
         for size in kmer_size :
           if size <= 2 : gap= 0 
-          else : gap = size - 2 
+          else : gap = size - 1 
           kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
           for kmer in kmers : 
               save.write("".join(str(kmer + '\n')))
@@ -108,8 +111,8 @@ def get_kmers(seq_record , kmer_size , reduce , path):
 
 
 if __name__ == '__main__' : 
-    #parameter
-    k = range(3,11)    
+    #parameter 
+    k = range(9,10)    
     reduce = 6 
 
     folder_path = "".join(os.getcwd()+"/kmr_temp/")
@@ -118,7 +121,7 @@ if __name__ == '__main__' :
 
         os.makedirs(folder_path)
 
-    multi_fasta = [record for record in SeqIO.parse("<db/path.fasta>", "fasta")]
+    multi_fasta = [record for record in SeqIO.parse("small_db.fasta", "fasta")]
     print("Perfomring Gapped k-mer count on {} sequences | parameters (k-mer size ={}; reduction = {} )".format(len(multi_fasta), k , str(reduce)))
     
     pool = mp.Pool(processes=4)
@@ -130,6 +133,5 @@ if __name__ == '__main__' :
     # close the pool and wait for the worker processes to finish
     pool.close()
     pool.join()
-
 
 
