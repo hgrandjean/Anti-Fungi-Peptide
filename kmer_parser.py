@@ -19,8 +19,9 @@ from functools import partial
 # RED1 : Hydrophobicity A= hydrophocic ; B = hydrophilic ; 
 # RED2 : Physiochemical   A= hydrophocic ; B = hydrophilic ; C = Aromatic ; D = Polar ; E = Acidic ; F = Basic ; G = Ionizable ; 
 # RED3 : Solvent accessibility ; A = Low ; B = Medium ; C = High
-# RED4 :  Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
-# RED5 :  Hydrophobicity and structure;  A = Hydrophilic ; B = Hydrophobic : C = Structural
+# RED4 : Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
+# RED5 : Hydrophobicity and structure;  A = Hydrophilic ; B = Hydrophobic : C = Structural
+# RED6 : Hydrophobicity size and charge; A = Large and hyphobic; B = small hydrophobic ; P = positive hydrophilic ; U = unchuraged hydrophilic ; N = negative hydrophilic 
 
 
 reduction_dictionnaries = {  
