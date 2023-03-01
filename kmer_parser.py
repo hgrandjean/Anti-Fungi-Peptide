@@ -15,7 +15,7 @@ from functools import partial
 
 # reduce AA sequence complexity using different set of in-vitro/silico properties
 # Reduction Encoding : 
-# RED1 : Hydrophobicity A = hydrophobic ; B = hydrophilic ;
+# RED1 : Hydrophobicity A= hydrophobic ; B = hydrophilic ;
 # RED2 : Physico-chemical   A= hydrophobic ; B = hydrophilic ; C = Aromatic ; D = Polar ; E = Acidic ; F = Basic ; G = Ionizable ;
 # RED3 : Solvent accessibility ; A = Low ; B = Medium ; C = High
 # RED4 : Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
@@ -43,6 +43,9 @@ reduction_dictionaries = {
     'V' : ['A','A','A','B','B', 'A'], #Valine
     'W' : ['B','-','A','A','A', 'A'], #Tryptophan
     'Y' : ['B','G','A','A','A', 'U'], #Tyrosine
+    
+    'r' : ['B','F','C','C','A', 'P'], #Arginine
+    'J' : ['B','F','C','C','A', 'P'], #un-usual amino-acid
 }
 
 def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionaries):
@@ -56,7 +59,10 @@ def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionaries):
     """
     reduced_seq = ""
     for aa in sequence:
-        reduced_seq += r_dict[aa][RED_dict - 1]
+        if aa not in r_dict.keys():
+            pass
+        else : 
+            reduced_seq += r_dict[aa][RED_dict - 1]
     return reduced_seq 
 
 
@@ -118,7 +124,7 @@ if __name__ == '__main__' :
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    multi_fasta = [record for record in SeqIO.parse("test.fasta", "fasta")]
+    multi_fasta = [record for record in SeqIO.parse("positive_db.fasta", "fasta")]
     print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences | parameters (k-mer size = {k}; reduction = {str(reduce)} )")
     pool = mp.Pool(processes=4)
 
@@ -129,4 +135,5 @@ if __name__ == '__main__' :
     # close the pool and wait for the worker processes to finish
     pool.close()
     pool.join()
+
 
