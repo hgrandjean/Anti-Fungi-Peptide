@@ -15,7 +15,7 @@ from functools import partial
 
 # reduce AA sequence complexity using different set of in-vitro/silico properties
 # Reduction Encoding : 
-# RED1 : Hydrophobicity A= hydrophobic ; B = hydrophilic ;
+# RED1 : Hydrophobicity A = hydrophobic ; B = hydrophilic ;
 # RED2 : Physico-chemical   A= hydrophobic ; B = hydrophilic ; C = Aromatic ; D = Polar ; E = Acidic ; F = Basic ; G = Ionizable ;
 # RED3 : Solvent accessibility ; A = Low ; B = Medium ; C = High
 # RED4 : Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
@@ -42,7 +42,7 @@ reduction_dictionaries = {
     'T' : ['B','D','B','A','A', 'U'], #Threonine
     'V' : ['A','A','A','B','B', 'A'], #Valine
     'W' : ['B','-','A','A','A', 'A'], #Tryptophan
-    'Y' : ['B','G','A','A','A', 'Y'], #Tyrosine
+    'Y' : ['B','G','A','A','A', 'U'], #Tyrosine
 }
 
 def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionaries):
@@ -118,7 +118,7 @@ if __name__ == '__main__' :
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    multi_fasta = [record for record in SeqIO.parse("small_db.fasta", "fasta")]
+    multi_fasta = [record for record in SeqIO.parse("test.fasta", "fasta")]
     print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences | parameters (k-mer size = {k}; reduction = {str(reduce)} )")
     pool = mp.Pool(processes=4)
 
