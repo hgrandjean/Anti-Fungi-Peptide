@@ -14,17 +14,17 @@ from functools import partial
 
 
 
-# reduce AA sequence complexity using different set of in-vitro/sillico properties 
+# reduce AA sequence complexity using different set of in-vitro/silico properties
 # Reduction Encoding : 
-# RED1 : Hydrophobicity A= hydrophocic ; B = hydrophilic ; 
-# RED2 : Physiochemical   A= hydrophocic ; B = hydrophilic ; C = Aromatic ; D = Polar ; E = Acidic ; F = Basic ; G = Ionizable ; 
+# RED1 : Hydrophobicity A= hydrophobic ; B = hydrophilic ;
+# RED2 : Physico-chemical   A= hydrophobic ; B = hydrophilic ; C = Aromatic ; D = Polar ; E = Acidic ; F = Basic ; G = Ionizable ;
 # RED3 : Solvent accessibility ; A = Low ; B = Medium ; C = High
 # RED4 : Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
 # RED5 : Hydrophobicity and structure;  A = Hydrophilic ; B = Hydrophobic : C = Structural
-# RED6 : Hydrophobicity size and charge; A = Large and hyphobic; B = small hydrophobic ; P = positive hydrophilic ; U = unchuraged hydrophilic ; N = negative hydrophilic 
+# RED6 : Hydrophobicity size and charge; A = Large and hydrophobic; B = small hydrophobic ; P = positive hydrophilic ; U = uncharged hydrophilic ; N = negative hydrophilic
 
 
-reduction_dictionnaries = {  
+reduction_dictionaries = {
     'A' :['A','A','B','B','B', 'B'], #Alanine
     'C' :['B','G','A','A','A', 'B'], #Cysteine
     'D' :['B','E','C','C','A', 'N'], #Aspartic acid
@@ -51,10 +51,10 @@ def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionnaries):
     """ transform sequence using AA characteristics in proteins:
     __ Args __ 
     sequence (Seq): AA sequence in single letter codification 
-    r_dict (dict) : transformation dictionnary in single letter codifiaction 
+    r_dict (dict) : transformation dictionary in single letter codification
     
     __ Returns __ 
-    reduced AA sequence using transformation dictionnary 
+    reduced AA sequence using transformation dictionary
     """
     reduced_seq = ""
     for aa in sequence:
@@ -98,7 +98,6 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
     return kmers
 
 
-
 def get_kmers(seq_record , kmer_size , reduce, path):
     record , seq = seq_record.id , seq_record.seq
     with open("".join(path+f"{record}.kmr") , "w" ) as save:
@@ -118,7 +117,6 @@ if __name__ == '__main__' :
     folder_path = "".join(os.getcwd()+"/kmr_temp/")
 
     if not os.path.exists(folder_path):
-
         os.makedirs(folder_path)
 
     multi_fasta = [record for record in SeqIO.parse("small_db.fasta", "fasta")]
