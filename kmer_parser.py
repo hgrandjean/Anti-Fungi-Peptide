@@ -119,11 +119,12 @@ def get_kmers(seq_record , reduce, path):
             
 def setup_directory(dir_name):
     if os.path.exists(dir_name):
-        answer = input(f"Found {dir_name}\nAre you sure that you want to delete it? [yes, no]\n")
-        if answer == "yes":
+        answer = input(f"Found {dir_name}\nAre you sure that you want to delete it? [y, n]\n")
+        if answer == "y":
             shutil.rmtree(dir_name)
             print(f"{dir_name} deleted.")
         else:
+            print("Operation canceled")
             os._exit(1)
 
     os.makedirs(dir_name)
@@ -146,7 +147,22 @@ def run(fastas, folder_path, name):
     pool.close()
     pool.join() 
 
-    print(f"[{name}] Finished running")  
+    print(f"[{name}] Finished running")
+
+def clean_database(db_file_name, clean_db_file_name):
+    print(f"Cleaning {db_file_name} to keep peptides between 3 and 18")
+    multi_fasta = parse_fasta_file(db_file_name)
+    multi_fasta_size = []
+    for fasta in multi_fasta :
+        seq = fasta.seq
+        fasta.description = ""
+        if fasta.id.find("|") != -1:
+            fasta.id = "".join(fasta.id.split("|")[1])
+        if len(seq) in range(3,19):
+            multi_fasta_size.append(fasta)
+
+    SeqIO.write(multi_fasta_size, clean_db_file_name, "fasta")
+    print(f"Output clean database in {db_file_name}")  
 
 if __name__ == '__main__' : 
 
@@ -161,3 +177,8 @@ if __name__ == '__main__' :
     # Create descriptors for each peptide
     run(neg_fastas, neg_temp_path, "Negative peptides")
     run(pos_fastas, pos_temp_path, "Positive peptides")
+
+    print("Start selecting the peptides")
+
+    clean_database("uniprot_neg_db.fasta", "negative_db_size.fasta")
+    clean_database("positive_db_nr.fasta", "positive_db_size.fasta")
