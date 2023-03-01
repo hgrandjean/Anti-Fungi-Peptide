@@ -47,6 +47,9 @@ reduction_dictionaries = {
     'r' : ['B','F','C','C','A', 'P'], #Arginine
     'J' : ['B','F','C','C','A', 'P'], #un-usual amino-acid
 }
+reduce = 6 
+neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
+pos_temp_path = "".join(os.getcwd() + "/kmr_pos_temp/")
 
 def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionaries):
     """ transform sequence using AA characteristics in proteins:
@@ -112,27 +115,41 @@ def get_kmers(seq_record , reduce, path):
         kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
         for kmer in kmers : 
             save.write("".join(str(kmer + '\n')))
+            
+def setup_directory(dir_name):
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+        print(f"Created {dir_name}")
 
+def parse_fasta_file(file_name):
+    multi_fasta = [record for record in SeqIO.parse(file_name, "fasta")]
+    print(f"Ended parsing of {file_name}")
+    return multi_fasta
 
-if __name__ == '__main__' : 
-    #parameter 
-    reduce = 6 
-
-    folder_path = "".join(os.getcwd()+"/kmr_pos_temp/")
-
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-
-    multi_fasta = [record for record in SeqIO.parse("positive_db_size.fasta", "fasta")]
-    print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences ; reduction = {str(reduce)} )")
+def run(fastas, name):
+    print(f"[{name}] Performing Gapped k-mer count on {len(fastas)} sequences ; reduction = {reduce} )")
     pool = mp.Pool(processes=4)
 
     # map the analyze_sequence function to the sequences
-    main = partial(get_kmers, reduce = reduce  , path = folder_path)
-    results = pool.map(main , multi_fasta)
+    main = partial(get_kmers, reduce = reduce  , path = neg_temp_path)
+    results = pool.map(main , fastas)
 
     # close the pool and wait for the worker processes to finish
     pool.close()
-    pool.join()
+    pool.join() 
 
+    print(f"[{name}] Finished running")  
 
+if __name__ == '__main__' : 
+
+    # Create directories for stocking descriptors 
+    setup_directory(neg_temp_path)
+    setup_directory(pos_temp_path)
+
+    # Get list of fastas
+    neg_fastas = parse_fasta_file("negative_db_size.fasta")
+    pos_fastas = parse_fasta_file("positive_db_size.fasta")
+    
+    # Create descriptors for each peptide
+    run(neg_fastas, "Negative peptides")
+    run(pos_fastas, "Positive peptides")
