@@ -12,6 +12,7 @@ import threading
 import time
 from functools import partial
 import shutil
+import math
 
 
 # reduce AA sequence complexity using different set of in-vitro/silico properties
@@ -164,6 +165,40 @@ def clean_database(db_file_name, clean_db_file_name):
     SeqIO.write(multi_fasta_size, clean_db_file_name, "fasta")
     print(f"Output clean database in {db_file_name}")  
 
+def produce_scoring(neg_result_file_name, pos_result_file_name):
+    print("Producing scoring")
+    with open(pos_temp_path + pos_result_file_name , "r") as pos : 
+        positive = pos.readlines()
+    with open(neg_temp_path + neg_result_file_name , "r") as neg : 
+        negative = neg.readlines()
+    
+    print("Starting to count the occurences")
+    #count of descriptors in positive then in negative list
+    kmers_counter={}
+    for kmer in positive:
+        if kmer in kmers_counter.keys() : 
+            kmers_counter[kmer][0] +=1 
+        else : 
+            kmers_counter[kmer] = [1,0,0]
+    for kmer in negative:
+        if kmer in kmers_counter.keys() : 
+            kmers_counter[kmer][1] +=1 
+        else : 
+            kmers_counter[kmer] = [0,1, 0]
+
+    print("Finished counting the occurences\nStart computing scores")
+    #score attribution to each descriptor
+    for kmer in kmers_counter.keys() : 
+        kmers_counter[kmer][2] = math.log((kmers_counter[kmer][0]+1)/(kmers_counter[kmer][1]+1))
+
+    print("Finished computing scores\nCreate tsv file")
+    #save data to tsv file
+    with open("unique_set.tsv" , "w") as save :
+        unique_set_str = ""
+        for kmer in kmers_counter.keys() : 
+            unique_set_str += str(kmer).strip()+'\t'+str(kmers_counter[kmer])+'\n'
+        save.write(unique_set_str)
+
 if __name__ == '__main__' : 
 
     # Create directories for stocking descriptors 
@@ -182,3 +217,5 @@ if __name__ == '__main__' :
 
     clean_database("uniprot_neg_db.fasta", "negative_db_size.fasta")
     clean_database("positive_db_nr.fasta", "positive_db_size.fasta")
+
+    produce_scoring("result.kmr", "result.kmr")
