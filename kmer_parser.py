@@ -42,7 +42,7 @@ reduction_dictionaries = {
     'T' : ['B','D','B','A','A', 'U'], #Threonine
     'V' : ['A','A','A','B','B', 'A'], #Valine
     'W' : ['B','-','A','A','A', 'A'], #Tryptophan
-    'Y' : ['B','G','A','A','A', 'Y'], #Tyrosine
+    'Y' : ['B','G','A','A','A', 'U'], #Tyrosine
 }
 
 def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionaries):
