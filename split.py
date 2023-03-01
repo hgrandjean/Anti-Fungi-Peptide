@@ -1,7 +1,7 @@
 import math 
-with open("kmr_temp/sp0.kmr" , "r") as pos : 
+with open("kmr_pos_temp/pos.kmr" , "r") as pos : 
     positive = list (pos.readlines()) #replace set by something else
-with open("kmr_temp/sp1.kmr" , "r") as neg : 
+with open("kmr_neg_temp/neg.kmr" , "r") as neg : 
     negative = list (neg.readlines()) #replace set by something else
 
 #count of descriptors in positive then in negative list
