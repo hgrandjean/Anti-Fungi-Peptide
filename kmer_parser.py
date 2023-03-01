@@ -106,7 +106,7 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
 def get_kmers(seq_record , reduce, path):
     record , seq = seq_record.id , seq_record.seq
     with open("".join(path+f"{record}.kmr") , "w" ) as save:
-        size = min(len(seq), 4)
+        size = min(len(seq), 5)
         if size <= 2 : gap = 0 
         else : gap = size - 2 
         kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
@@ -118,12 +118,12 @@ if __name__ == '__main__' :
     #parameter 
     reduce = 6 
 
-    folder_path = "".join(os.getcwd()+"/kmr_neg_temp/")
+    folder_path = "".join(os.getcwd()+"/kmr_pos_temp/")
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    multi_fasta = [record for record in SeqIO.parse("negative_db_size.fasta", "fasta")]
+    multi_fasta = [record for record in SeqIO.parse("positive_db_size.fasta", "fasta")]
     print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences ; reduction = {str(reduce)} )")
     pool = mp.Pool(processes=4)
 
