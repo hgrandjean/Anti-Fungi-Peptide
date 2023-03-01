@@ -103,33 +103,32 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
     return kmers
 
 
-def get_kmers(seq_record , kmer_size , reduce, path):
+def get_kmers(seq_record , reduce, path):
     record , seq = seq_record.id , seq_record.seq
     with open("".join(path+f"{record}.kmr") , "w" ) as save:
-        for size in kmer_size :
-          if size <= 2 : gap = 0 
-          else : gap = size - 2 
-          kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
-          for kmer in kmers : 
-              save.write("".join(str(kmer + '\n')))
+        size = min(len(seq), 4)
+        if size <= 2 : gap = 0 
+        else : gap = size - 2 
+        kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
+        for kmer in kmers : 
+            save.write("".join(str(kmer + '\n')))
 
 
 if __name__ == '__main__' : 
     #parameter 
-    k = range(9,10)    
     reduce = 6 
 
-    folder_path = "".join(os.getcwd()+"/kmr_temp/")
+    folder_path = "".join(os.getcwd()+"/kmr_neg_temp/")
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    multi_fasta = [record for record in SeqIO.parse("positive_db.fasta", "fasta")]
-    print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences | parameters (k-mer size = {k}; reduction = {str(reduce)} )")
+    multi_fasta = [record for record in SeqIO.parse("negative_db_size.fasta", "fasta")]
+    print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences ; reduction = {str(reduce)} )")
     pool = mp.Pool(processes=4)
 
     # map the analyze_sequence function to the sequences
-    main = partial(get_kmers, kmer_size = k , reduce = reduce  , path = folder_path)
+    main = partial(get_kmers, reduce = reduce  , path = folder_path)
     results = pool.map(main , multi_fasta)
 
     # close the pool and wait for the worker processes to finish
