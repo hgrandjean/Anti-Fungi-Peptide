@@ -1,17 +1,17 @@
 import math 
 with open("kmr_temp/sp0.kmr" , "r") as pos : 
-    positif = list (pos.readlines()) #replace set by something else 
+    positive = list (pos.readlines()) #replace set by something else
 with open("kmr_temp/sp1.kmr" , "r") as neg : 
-    negatif = list (neg.readlines()) #replace set by something else 
+    negative = list (neg.readlines()) #replace set by something else
 
-#count of descriptors in positive then in negatif list 
+#count of descriptors in positive then in negative list
 kmers_counter={}
-for kmer in positif:
+for kmer in positive:
     if kmer in kmers_counter.keys() : 
       kmers_counter[kmer][0] +=1 
     else : 
       kmers_counter[kmer] = [1,0,0]
-for kmer in negatif:
+for kmer in negative:
     if kmer in kmers_counter.keys() : 
       kmers_counter[kmer][1] +=1 
     else : 

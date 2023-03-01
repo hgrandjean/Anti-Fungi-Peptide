@@ -47,7 +47,7 @@ reduction_dictionaries = {
     'Y' : ['B','G','A','A','A', 'Y'], #Tyrosine
 }
 
-def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionnaries):
+def reduce_seq(sequence, RED_dict ,r_dict = reduction_dictionaries):
     """ transform sequence using AA characteristics in proteins:
     __ Args __ 
     sequence (Seq): AA sequence in single letter codification 
