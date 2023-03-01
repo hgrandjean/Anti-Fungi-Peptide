@@ -11,6 +11,7 @@ from collections import Counter
 import threading
 import time
 from functools import partial
+import shutil
 
 
 # reduce AA sequence complexity using different set of in-vitro/silico properties
@@ -107,31 +108,38 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
 
 
 def get_kmers(seq_record , reduce, path):
-    record , seq = seq_record.id , seq_record.seq
-    with open("".join(path+f"{record}.kmr") , "w" ) as save:
+    seq = seq_record.seq
+    with open("".join(path+f"result.kmr") , "a" ) as save:
         size = min(len(seq), 5)
         if size <= 2 : gap = 0 
         else : gap = size - 2 
-        kmers = find_kmer(sequence= seq , kmer_size= size , ngap=gap , reduce= reduce )
+        kmers = find_kmer(sequence=seq , kmer_size=size , ngap=gap , reduce=reduce )
         for kmer in kmers : 
             save.write("".join(str(kmer + '\n')))
             
 def setup_directory(dir_name):
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-        print(f"Created {dir_name}")
+    if os.path.exists(dir_name):
+        answer = input(f"Found {dir_name}\nAre you sure that you want to delete it? [yes, no]\n")
+        if answer == "yes":
+            shutil.rmtree(dir_name)
+            print(f"{dir_name} deleted.")
+        else:
+            os._exit(1)
+
+    os.makedirs(dir_name)
+    print(f"Created {dir_name}")
 
 def parse_fasta_file(file_name):
     multi_fasta = [record for record in SeqIO.parse(file_name, "fasta")]
     print(f"Ended parsing of {file_name}")
     return multi_fasta
 
-def run(fastas, name):
+def run(fastas, folder_path, name):
     print(f"[{name}] Performing Gapped k-mer count on {len(fastas)} sequences ; reduction = {reduce} )")
     pool = mp.Pool(processes=4)
 
     # map the analyze_sequence function to the sequences
-    main = partial(get_kmers, reduce = reduce  , path = neg_temp_path)
+    main = partial(get_kmers, reduce = reduce  , path = folder_path)
     results = pool.map(main , fastas)
 
     # close the pool and wait for the worker processes to finish
@@ -151,5 +159,5 @@ if __name__ == '__main__' :
     pos_fastas = parse_fasta_file("positive_db_size.fasta")
     
     # Create descriptors for each peptide
-    run(neg_fastas, "Negative peptides")
-    run(pos_fastas, "Positive peptides")
+    run(neg_fastas, neg_temp_path, "Negative peptides")
+    run(pos_fastas, pos_temp_path, "Positive peptides")
