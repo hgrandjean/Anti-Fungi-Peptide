@@ -133,3 +133,6 @@ kmr_temp/
 
 # IDE Files
 .idea
+
+#MacOS File
+.DS_Store

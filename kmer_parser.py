@@ -13,7 +13,6 @@ import time
 from functools import partial
 
 
-
 # reduce AA sequence complexity using different set of in-vitro/silico properties
 # Reduction Encoding : 
 # RED1 : Hydrophobicity A= hydrophobic ; B = hydrophilic ;
@@ -22,7 +21,6 @@ from functools import partial
 # RED4 : Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
 # RED5 : Hydrophobicity and structure;  A = Hydrophilic ; B = Hydrophobic : C = Structural
 # RED6 : Hydrophobicity size and charge; A = Large and hydrophobic; B = small hydrophobic ; P = positive hydrophilic ; U = uncharged hydrophilic ; N = negative hydrophilic
-
 
 reduction_dictionaries = {
     'A' :['A','A','B','B','B', 'B'], #Alanine
@@ -94,6 +92,7 @@ def find_kmer(sequence, kmer_size, ngap, reduce ):
     for k in range(ngap):
         current_kmers = gap_kmer(current_kmers)
         kmers += current_kmers
+
     #return [hash_kmer(kmer) for kmer in kmers] 
     return kmers
 
@@ -121,7 +120,6 @@ if __name__ == '__main__' :
 
     multi_fasta = [record for record in SeqIO.parse("small_db.fasta", "fasta")]
     print(f"Performing Gapped k-mer count on {len(multi_fasta)} sequences | parameters (k-mer size = {k}; reduction = {str(reduce)} )")
-    
     pool = mp.Pool(processes=4)
 
     # map the analyze_sequence function to the sequences
@@ -131,5 +129,3 @@ if __name__ == '__main__' :
     # close the pool and wait for the worker processes to finish
     pool.close()
     pool.join()
-
-
