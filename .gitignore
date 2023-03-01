@@ -135,4 +135,4 @@ kmr_temp/
 .idea
 
 #MacOS File
-.DS_Store
+*.DS_Store
