@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # Temporary files
-kmr_temp/
+kmr_temp/*
 *.fasta
 *.kmr
 
