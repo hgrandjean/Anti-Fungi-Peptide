@@ -130,3 +130,6 @@ dmypy.json
 
 # Temporary files
 kmr_temp/
+
+# IDE Files
+.idea
