@@ -49,7 +49,18 @@ reduction_dictionaries = {
     'r' : ['B','F','C','C','A', 'P'], #Arginine
     'J' : ['B','F','C','C','A', 'P'], #un-usual amino-acid
 }
+# Reduction dictionnary in use
 reduce = 6 
+
+#Database to be cleaned
+dirty_neg_file_name = "uniprot_neg_db.fasta"
+dirty_pos_file_name = "positive_db_nr.fasta"
+
+#Clean database containing peptides between 3 and 18 aa
+neg_fastas_file_name = "negative_db_size.fasta"
+pos_fastas_file_name = "positive_db_size.fasta"
+
+# Temporary directories for kmers
 neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
 pos_temp_path = "".join(os.getcwd() + "/kmr_pos_temp/")
 
@@ -163,7 +174,7 @@ def clean_database(db_file_name, clean_db_file_name):
             multi_fasta_size.append(fasta)
 
     SeqIO.write(multi_fasta_size, clean_db_file_name, "fasta")
-    print(f"Output clean database in {db_file_name}")  
+    print(f"Output clean database in {clean_db_file_name}")  
 
 def produce_scoring(neg_result_file_name, pos_result_file_name):
     print("Producing scoring")
@@ -201,21 +212,23 @@ def produce_scoring(neg_result_file_name, pos_result_file_name):
 
 if __name__ == '__main__' : 
 
+    print("Start selecting the peptides")
+
+    #Select peptides between 3 and 18 aa
+    clean_database(dirty_neg_file_name, neg_fastas_file_name)
+    clean_database(dirty_pos_file_name, pos_fastas_file_name)
+
     # Create directories for stocking descriptors 
     setup_directory(neg_temp_path)
     setup_directory(pos_temp_path)
 
     # Get list of fastas
-    neg_fastas = parse_fasta_file("negative_db_size.fasta")
-    pos_fastas = parse_fasta_file("positive_db_size.fasta")
+    neg_fastas = parse_fasta_file(neg_fastas_file_name)
+    pos_fastas = parse_fasta_file(pos_fastas_file_name)
     
     # Create descriptors for each peptide
     run(neg_fastas, neg_temp_path, "Negative peptides")
     run(pos_fastas, pos_temp_path, "Positive peptides")
 
-    print("Start selecting the peptides")
-
-    clean_database("uniprot_neg_db.fasta", "negative_db_size.fasta")
-    clean_database("positive_db_nr.fasta", "positive_db_size.fasta")
-
+    # Compute score of descriptors
     produce_scoring("result.kmr", "result.kmr")
