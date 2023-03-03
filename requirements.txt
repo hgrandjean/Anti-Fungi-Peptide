@@ -1,9 +1,5 @@
 biopython
 pandas
 numpy
-<<<<<<< HEAD
-=======
-# hashlib
-sklearn
->>>>>>> 0e4b86823d347cd4af649c0f39afeece1a048b58
 matplotlib
+scipy
