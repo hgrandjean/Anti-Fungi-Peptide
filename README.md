@@ -10,4 +10,8 @@ python -m venv .venv
 source .venv/Scripts/activate # or .\.venv\Scripts\activate.bat if you are using Windows cmd
 pip install -r requirements.txt
 ```
+## Ramachandran plot module
+
+Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
+
 ![plot](./directory_1/directory_2/.../directory_n/plot.png)
