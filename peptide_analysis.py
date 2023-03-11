@@ -11,22 +11,29 @@ import numpy as np
 import pylab as P
 import math 
 from scipy import signal
+from scipy.signal import find_peaks
 from scipy.fft import fft, fftfreq, fftshift , rfft
 
 
 
-multi_fasta = [record for record in SeqIO.parse("negative_db_size.fasta", "fasta")]
+multi_fasta = [record for record in SeqIO.parse("positive_db_size.fasta", "fasta")]
+space = np.array([])
+loc = np.array([])
 
 for seq in multi_fasta : 
     pa = ProteinAnalysis(str(seq.seq))
+    
+    
     print(pa)
     print(pa.secondary_structure_fraction()[0])
     print(pa.charge_at_pH(7))
-    print(pa.protein_scale(ProtParamData.es , 2, edge=1.0))
+    print(pa.protein_scale(ProtParamData.kd , 2, edge=1.0))
     
     hydropho = pa.protein_scale(ProtParamData.kd, 2, edge=1.0)
     size = len(hydropho)
+    
     #autocorrelation of signal 
+    '''
     x = np.array(hydropho) 
     # Mean
     mean = np.mean(hydropho)
@@ -36,13 +43,25 @@ for seq in multi_fasta :
     ndata = hydropho - mean
     acorr = np.correlate(ndata, ndata, 'full')[len(ndata)-1:] 
     acorr = acorr / var / len(ndata)
-
-     
-    plt.plot(range(len(hydropho)), acorr )
-
+    '''
     
-wheel =helixvis.draw_wheel(str(seq.seq)) 
-plt.title('Auto-correlation of hydrophobicity in the peptides sequnces')
+    # get location of hydrophoilic residues 
+    peaks, _ = find_peaks(hydropho, distance=2)
+    loc=np.append(loc,peaks)
+    space = np.append(space,np.mean(np.diff(peaks))) #space between hydrophilic residues 
+    
+    #plt.plot(range(len(hydropho)), hydropho ) #
+    #plt.plot(range(size), acorr )
+
+
+loc = loc.flatten()
+space = space.flatten()
+print(loc)
+print(space)
+plt.hist(space)
+
+#wheel =helixvis.draw_wheel(str(seq.seq)) 
+#plt.title('Auto-correlation of hydrophobicity in the peptides sequences')
 plt.show()
 '''
 
