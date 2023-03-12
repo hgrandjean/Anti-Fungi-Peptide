@@ -18,7 +18,7 @@ Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
 
 ## Description of scripts 
 
-###### Kmer_parser.py 
+###### kmer_parser.py 
 Performs database curation (positive and negative) using a size restriction filter : only AMPs in size range 3 to 18 aa are selected.
 It creates 2 temporary directory (pos and neg) each containing a kmr file for each peptide sequence containing all possible kmer of size 5 with maximum 3 gaps 
 All generated kmers are then concatenated and counted to a dictionnary prior scoring.
