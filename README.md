@@ -20,7 +20,8 @@ Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
 Was obtained from DRAMP server and only alpha-helixes peptides were selected : http://dramp.cpu-bioinfor.org/
 
 ### Negative Database 
-Peptide of short size were downloaded on Uniprot server, they were previously filtered for intracellular only presence as it was assumed they would not biologically have a relevant effet againt bacteria and fungy.
+Peptide of short size were downloaded on Uniprot server : https://www.uniprot.org/
+They were previously filtered for intracellular only presence as it was assumed they would not biologically have a relevant effet againt bacteria and fungy.
 
 ## Description of scripts 
 
