@@ -35,7 +35,9 @@ Computes physico-chemicals properties of peptides based on their sequences
 - plot hydrophobicity and autocorrelation transformation 
 - spaces between hydrophilic domains 
 - helical distribution of aa along helixes 
-![plot](positive_db_size_aa_distrib.png)
+
+
+![plot](positive_db_size_aa_distrib.png | width=100)
 
 ###### score_peptide.py
 Uses unique_set.tsv file to attribute a score to a given peptide sequence according to descriptors scores computed with kmer_parser.py
