@@ -36,6 +36,9 @@ $$S_{desc}=log( \frac{ occ_{pos} +1 }{occ_{neg} +1} )$$
 
 The score is added to each key: value couple of the dictionnary and the global data are saved in file unique_set.tsv 
 
+###### summarise_db.py 
+Analyse frequency of aa in database for given positions 
+
 ###### peptide_analysis.py 
 Computes physico-chemicals properties of peptides based on their sequences
 - net charge at pH 
