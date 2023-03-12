@@ -14,7 +14,13 @@ pip install -r requirements.txt
 
 Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
 
+## Database definition
 
+### Positive Database 
+Was obtained from DRAMP server and only alpha-helixes peptides were selected 
+
+### Negative Database 
+Peptide of short size were downloaded on Uniprot server, they were previously filtered for intracellular only presence as it was assumed they would not biologically have a relevant effet againt bacteria and fungy.
 
 ## Description of scripts 
 
