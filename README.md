@@ -25,7 +25,7 @@ Al generated kmers are then concatenated and counted to a dictionnary prior scor
 
 Scoring function based on occurence of descriptor in positive relative to negative database is computed as bellow : 
 
-$$S_{desc}=log( ( occ_{pos} +1 )/ (occ_{neg} +1))$$
+$$S_{desc}=log( frac{ occ_{pos} +1 }{occ_{neg} +1} )$$
 
 The score is added to each key: value couple of the dictionnary and the global data are saved in file unique_set.tsv 
 
