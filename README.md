@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
 
-![plot](./directory_1/directory_2/.../directory_n/plot.png)
+
 
 ## Description of scripts 
 
@@ -35,6 +35,7 @@ Computes physico-chemicals properties of peptides based on their sequences
 - plot hydrophobicity and autocorrelation transformation 
 - spaces between hydrophilic domains 
 - helical distribution of aa along helixes 
+![plot](./directory_1/directory_2/.../directory_n/plot.png)
 
 ###### score_peptide.py
 Uses unique_set.tsv file to attribute a score to a given peptide sequence according to descriptors scores computed with kmer_parser.py
