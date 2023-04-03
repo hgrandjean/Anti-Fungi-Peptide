@@ -14,8 +14,8 @@ def score_kmers(pep_seq , reduce, score_dict ):
     
     
 
+### loadding score from computed tsv file ###
 score_dict = {}
-
 with open("unique_set.tsv", "r" ) as scores :
     for line in scores:
         key, value = line.removesuffix('\n').split('\t')
