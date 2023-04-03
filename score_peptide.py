@@ -13,10 +13,11 @@ def score_kmers(pep_seq , reduce, score_dict ):
       return kmer_score
     
     
-
+score_file = "unique_set.tsv"
 ### loadding score from computed tsv file ###
+print (f"Loading descriptors scores from file : {score_file}")
 score_dict = {}
-with open("unique_set.tsv", "r" ) as scores :
+with open(score_file, "r" ) as scores :
     for line in scores:
         key, value = line.removesuffix('\n').split('\t')
         value =  value.strip('][').split(', ')
