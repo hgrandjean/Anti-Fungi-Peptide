@@ -14,6 +14,7 @@ def score_kmers(pep_seq , reduce, score_dict ):
     
     
 score_file = "unique_set.tsv"
+
 ### loadding score from computed tsv file ###
 print (f"Loading descriptors scores from file : {score_file}")
 score_dict = {}
@@ -23,7 +24,7 @@ with open(score_file, "r" ) as scores :
         value =  value.strip('][').split(', ')
         value = [float(x) for x in value ]
         score_dict[key] = value 
-
+print ("Finished loading scores \n Starting scoring peptides")
 
 score = score_kmers("RGLRRLGRKIAHGVKKYG ",6,score_dict) # SMAP-18
 print(score)
