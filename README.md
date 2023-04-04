@@ -14,10 +14,11 @@ pip install -r requirements.txt
 
 Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
 
-## Database definition
+## Databases definition
 
-### Positive Database 
-Was obtained from DRAMP server and only alpha-helixes peptides were selected : http://dramp.cpu-bioinfor.org/
+### Positive Databases 
+Positive_db obtained from DRAMP server and only alpha-helixes peptides were selected : http://dramp.cpu-bioinfor.org/
+Posotive_db_reac_IC50 from 2005 DOI: 
 
 ### Negative Database 
 Peptide of short size were downloaded on Uniprot server : https://www.uniprot.org/
