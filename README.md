@@ -18,7 +18,7 @@ Link to the original repo: https://github.com/alxdrcirilo/RamachanDraw
 
 ### Positive Databases 
 Positive_db obtained from DRAMP server and only alpha-helixes peptides were selected : http://dramp.cpu-bioinfor.org/
-Posotive_db_reac_IC50 from 2005 DOI: 
+Positive_db_reac_IC50 from 2005 DOI: 
 
 ### Negative Database 
 Peptide of short size were downloaded on Uniprot server : https://www.uniprot.org/
