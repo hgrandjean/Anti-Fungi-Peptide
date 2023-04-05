@@ -6,6 +6,7 @@ import seaborn as sns
 import numpy as np
 import math 
 import random
+import sys
 from scipy import signal
 from scipy.signal import find_peaks
 from Bio import SeqIO
@@ -15,6 +16,51 @@ from Bio.SeqUtils import IsoelectricPoint  # Local
 from Bio.Seq import Seq
 from Bio.Data import IUPACData
 from Bio.SeqUtils import molecular_weight
+
+print( '                                                                                                                                                       ' )
+print( '                                                                                                                                                       ' )
+print( '                                                                                                                    ==========----                     ' )
+print( '                                                                                                                    ++++++++++******++=                ' )
+print( '                                                                                                                    -+++++++++********##-              ' )
+print( '  ---------  ---      --- ----------- ---  ---------- ---      --- ---     ---  ---------   ----------  ---          ++++++++++*********+              ' )
+print( ' #@@@@@@@@@#-#@@#=   +@@*=@@@@@@@@@@% @@@ *@@@@@@@@@@=*@@+    +@@#=@@@*    @@@ #@@@@@@@@@#=+%@@@@@@@@%+=@@#          =+++++++++*******+++=             ' )
+print( ' @@@=====%@@-#@@@#=  +@@*-===+@@%==== @@@ %@@+=======-*@@+    +@@#=@@@%*   @@@ @@@+====#%%=#@@*====*@@*=@@#           +=======++***+++++++             ' )
+print( ' @@@     %@@-#@@@@#- +@@*    -@@#     @@@ %@@-        *@@+    +@@#=@@@@%*  @@@ @@@-        #@@+    +@@*=@@#                  -=+++++++++++=            ' )
+print( ' @@@@@@@@@@@-#@@*#@#=+@@*    -@@#     @@@ %@@@@@@@=   *@@+    +@@#=@@%+%@*-@@@ @@@-  #@@@#-#@@@@@@@@@@*=@@#               =+***+++++++++++             ' )
+print( ' @@@+++++%@@-#@@= *@@@@@*    -@@#     @@@ %@@+++++-   *@@+    +@@#=@@% -@@@@@@ @@@-  =+%@@=#@@#++++#@@*=@@#            =+******++++++++=-              ' )
+print( ' @@@     %@@-#@@=  *@@@@*    -@@#     @@@ %@@-        *@@+    +@@#=@@%   @@@@@ @@@-    #@@=#@@+    +@@*=@@#         -+**********+++++-                 ' )
+print( ' @@@     %@@-#@@=   *@@@*    -@@#     @@@ %@@-        *@@@@@@@@@@#=@@%    @@@@ @@@@@@@@@@@=#@@+    +@@*=@@@@@@@@@@@-##***********+-                    ' )
+print( ' +++     +++-=++-    =++=    -+++     +++ +++          =++++++++= -+++     +++  +++++++++- =++-    -++= -++++++++++ *#********+-                       ' )
+print( '                                                                                                                    =##******++***++++++===-           ' )
+print( '                                                                                                                     *##**+++++++**********##+         ' )
+print( '                                                                                                                     -#*++++++++++***********+-        ' )
+print( '                                        -*******--*******-*******-+*******-*+-******+ =******+-******+                ==++++++++++********+++++        ' )
+print( '                                        -@%+++#@*#@*+++++-@%+++#@*=++@@*++=@%+@#+++%@=%@+++++++@#+++#%=                   --===+++*****++++++++-       ' )
+print( '                                        -@%+++#@*#@*+++  -@%+++#@*   %@-  =@%+@*   %@=%@*++=  +@#++++=                            =**++++++++++=       ' )
+print( '                                        -@@*****-#@#**+  -@%*****-   %@-  =@%+@*   %@=%@***=   *****%@=                        =+***+++++++++++        ' )
+print( '                                        -@%      #@*=====-@%         %@-  =@%+@#===%@=%@+======#*===%@=                     =+*******+++++++=-         ' )
+print( '                                        -#*      -#######-#*         *#   -#*=######*-+######*-*#####*                    +***********++++-            ' )
+print( '                                                                                                                         *#***********=-               ' )
+print( '                                                                                                                         +##********+=----             ' )
+print( '                                                                                                                         -##******++++*********++=     ' )
+print( '                                                                                                                          +###*++++++++**********#*-   ' )
+print( '                                                                                                                           #*++++++++++***********++   ' )
+print( '                                                                                                                           -====++++++++********++++=  ' )
+print( '                                                                                                                                     --==******++++++  ' )
+print( '                                                                                                                                         *#****++++++  ' )
+print( '                                                                                                                                          #*****+++-   ' )
+print( '                                                                                                                                          =#****+-     ' )
+print( '                                                                                                                                           **+-        ' )
+print( '                                                                                                                                                       ' )
+print( '                                                                                                                                                       ' )
+print('\n \n \n #######################################################################################################################################################')
+
+
+def progress_bar(count,total,size=100,sides="[]",full='#',empty='.',prefix=""):
+    x = int(size*count/total)
+    sys.stdout.write("\r" + prefix + sides[0] + full*x + empty*(size-x) + sides[1] + ' ' + str(count).rjust(len(str(total)),' ')+"/"+str(total))
+    if count==total:
+        sys.stdout.write("\n")
 
 ### scoring each descriptor found in the given peptide using score previously computed ###
 ### uses find_kmer function from kmer_parser ###
@@ -39,6 +85,7 @@ def score_kmers(pep_seq , reduce, score_dict ):
     
 score_file = "unique_set.tsv"
 ### loading score from computed tsv file ###
+
 print (f"Loading descriptors scores from file : {score_file}")
 score_dict = {}
 with open(score_file, "r" ) as scores :
@@ -47,8 +94,8 @@ with open(score_file, "r" ) as scores :
         value =  value.strip('][').split(', ')
         value = [float(x) for x in value ]
         score_dict[key] = value 
-print ("Finished loading scores \nStarting scoring peptides")
-
+print ("Finished loading scores")
+print('####################################################################################################################################################### \n \n \n')
 
 ### computation of peptide physical properties ###
 def pep_physical_analysis(peptide): 
@@ -64,7 +111,7 @@ def pep_physical_analysis(peptide):
     return [peptide , helix_prob*100 , charge , space ]
 
 
-
+'''
 ### loading of Real IC50 database ### 
 data= pd.read_excel("antimicrobial_peptide_with_IC_50.xlsx")  # SMAP-18 RGLRRLGRKIAHGVKKYG peptide 
 
@@ -83,12 +130,26 @@ for index, row in data.iterrows():
   computed_charge.append(physical_analysis[2])
   space.append(physical_analysis[3])
 
-
 data["helix_prob"]=helix_prob
 data["computed_charge"]=computed_charge
 data["space"]=space
 data["score"]=score
 print(data)
+data.to_excel("computed_db.xlsx")
+'''
+
+#import substitution probabilities from PAM2 data frame relative to mutation frequencies with conservation excluded
+pam2_prob_matrix=pd.read_excel('PAM_2_substitution_probabilities_formated.xlsx')
+print (f"Loading PAM substitution probabilities")
+aa_order='ARNDCQEGHILKMFPSTWYV'
+print (f"Finished loading PAM substitution probabilities \n \n \n")
+
+
+# Convert the DataFrame to a dictionary
+pam2_prob_dict = {}
+for row in pam2_prob_matrix.to_numpy():
+    pam2_prob_dict[row[0]]=row[1:]
+
 
 '''
 ### visualisation of multidimensionnal data ###
@@ -103,6 +164,7 @@ plt.show()
 '''
 
 ### generation and optimisation of a peptide sequence
+print('####################################################################################################################################################### \n \n \n')
 peptide = "AAAAAAAAAAAAAAAAAA"
 score_kmers(peptide,6,score_dict)
 bootstrap_iterations = 1000
@@ -112,17 +174,17 @@ charge_evol =[]
 space_evolution = []
 
 bootstrap = range(bootstrap_iterations)
+print("Starting generation of peptide from {bootstrap_iterations} bootstrap iterations \n ")
 
-
-AA_list = {"A": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7, "I": 8, "K": 9, "L": 10, "M": 11, "N": 12, "P": 13, "Q": 14, "R": 15, "S": 16, "T": 17, "V": 18, "W": 19, "Y": 20}
 
 for i in bootstrap:
-    # randomisation of mutation in the peptide sequence should be applied to biological form (To develop)
+    # randomisation of mutation location in the peptide sequence should be applied to biological form (To develop)
     random_index = random.randint(0, len(peptide) - 1)
     
     #replacing the amino acid selected to a knew one 
     random_amino_acid = peptide[random_index]
-    new_amino_acid = random.choice(list(AA_list.keys()))
+    prob = pam2_prob_dict[random_amino_acid]
+    new_amino_acid = random.choices(aa_order, prob, k=1)[0]
     new_peptide = peptide[:random_index] + new_amino_acid + peptide[random_index+1:]
 
     # Calculating scores of previous and new peptides sequences 
@@ -133,6 +195,7 @@ for i in bootstrap:
     helix_proba_evol.append(physical_analysis[1])
     charge_evol.append(physical_analysis[2])
     space_evolution.append(physical_analysis[3])
+    
     new_peptide_score = score_kmers(new_peptide,6,score_dict)
 
     # The peptide is selected if new score is higher 
@@ -147,9 +210,14 @@ for i in bootstrap:
     #   probability_of_acceptance = 1**(score_difference/100000)
     #    if random.random() < probability_of_acceptance:
     #        peptide = new_peptide
+    progress_bar(count=i+1,total=bootstrap_iterations,size=100,sides="||",full='#',empty=' ',prefix="Performing bootstraps... ")
 
-    
-
+print("\nFinal peptide : \n")    
+print(peptide)
+print(f"final score : {score_evolution[-1]}")
+print(f"final helix probability : {round(helix_proba_evol[-1], 2)} %")
+print(f"final global charge Q : {charge_evol[-1]}")
+print(f"final hydrophobicity frequency : {space_evolution[-1]}")
 
 plt.plot(bootstrap, score_evolution ,label = "score")   
 plt.plot(bootstrap, helix_proba_evol ,label = "helix probability") 
