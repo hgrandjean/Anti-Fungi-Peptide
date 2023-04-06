@@ -130,7 +130,6 @@ dmypy.json
 
 # Temporary files
 results/kmr_temp/*
-*.fasta
 *.kmr
 
 # IDE Files
