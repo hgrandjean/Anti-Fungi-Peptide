@@ -1,5 +1,5 @@
 ### import dependencies ####
-from __main__ import reduce_seq , gap_kmer , find_kmer
+from kmer_parser import reduce_seq , gap_kmer , find_kmer
 import pandas as pd 
 import matplotlib.pyplot as plt
 import seaborn as sns 
@@ -83,7 +83,7 @@ def score_kmers(pep_seq , reduce, score_dict ):
       return kmer_score/len(pep_seq)
     
     
-score_file = "results/descriptors_activity_scores.tsv"
+score_file = "unique_set.tsv"
 ### loading score from computed tsv file ###
 
 print (f"Loading descriptors scores from file : {score_file}")
@@ -113,7 +113,7 @@ def pep_physical_analysis(peptide):
 
 '''
 ### loading of Real IC50 database ### 
-data= pd.read_excel("AMPs_DB_IC50.xlsx")  # SMAP-18 RGLRRLGRKIAHGVKKYG peptide 
+data= pd.read_excel("antimicrobial_peptide_with_IC_50.xlsx")  # SMAP-18 RGLRRLGRKIAHGVKKYG peptide 
 
 ### computation of scores for each peptide ###
 score =[]
@@ -165,65 +165,79 @@ plt.show()
 
 ### generation and optimisation of a peptide sequence
 print('####################################################################################################################################################### \n \n \n')
-peptide = "AAAAAAAAAAAAAAAAAA"
+npep=50
+peptide = "RGLRRLGRKIAHGVKKYG"
 score_kmers(peptide,6,score_dict)
-bootstrap_iterations = 1000
+bootstrap_iterations = 10
 score_evolution = []
 helix_proba_evol = []
 charge_evol =[]
 space_evolution = []
-
+peptides_generated=[]
 bootstrap = range(bootstrap_iterations)
-print("Starting generation of peptide from {bootstrap_iterations} bootstrap iterations \n ")
+print("Starting generation of {npep}peptides from {bootstrap_iterations} bootstrap iterations \n ")
+ 
 
-
-for i in bootstrap:
-    # randomisation of mutation location in the peptide sequence should be applied to biological form (To develop)
-    random_index = random.randint(0, len(peptide) - 1)
+for p in range(0,npep):
+    peptide = "RGLRRLGRKIAHGVKKYG"
+    for i in bootstrap:
+        # randomisation of mutation location in the peptide sequence should be applied to biological form (To develop)
+        random_index = random.randint(0, len(peptide) - 1)
+        
+        #replacing the amino acid selected to a knew one 
+        random_amino_acid = peptide[random_index]
+        prob = pam2_prob_dict[random_amino_acid]
+        new_amino_acid = random.choices(aa_order, prob, k=1)[0]
+        new_peptide = peptide[:random_index] + new_amino_acid + peptide[random_index+1:]
     
-    #replacing the amino acid selected to a knew one 
-    random_amino_acid = peptide[random_index]
-    prob = pam2_prob_dict[random_amino_acid]
-    new_amino_acid = random.choices(aa_order, prob, k=1)[0]
-    new_peptide = peptide[:random_index] + new_amino_acid + peptide[random_index+1:]
-
-    # Calculating scores of previous and new peptides sequences 
-    peptide_score = score_kmers(peptide,6,score_dict)
-    score_evolution.append(peptide_score)
+        # Calculating scores of previous and new peptides sequences 
+        peptide_score = score_kmers(peptide,6,score_dict)
+        #score_evolution.append(peptide_score)
+        
+        physical_analysis = pep_physical_analysis(peptide)
+        #helix_proba_evol.append(physical_analysis[1])
+        #charge_evol.append(physical_analysis[2])
+        #space_evolution.append(physical_analysis[3])
+        
+        new_peptide_score = score_kmers(new_peptide,6,score_dict)
     
-    physical_analysis = pep_physical_analysis(peptide)
+        # The peptide is selected if new score is higher 
+        score_difference = new_peptide_score - peptide_score
+    
+        if score_difference > 0:
+            peptide = new_peptide
+    
+        #addtion of randomness : if the mutation is not too much unfavored by the env then it can appen to be selected (To develop)
+        
+        #else:
+        #   probability_of_acceptance = 1**(score_difference/100000)
+        #    if random.random() < probability_of_acceptance:
+        #        peptide = new_peptide
+        progress_bar(count=i+1,total=bootstrap_iterations,size=100,sides="||",full='#',empty=' ',prefix="Performing bootstraps... ")
+    
+    
+    
+    print("\nFinal peptide : \n")    
+    print(peptide)
+    print(f"final score : {score_kmers(peptide,6,score_dict)}")
+    print(f"final helix probability : {round(physical_analysis[1], 2)} %")
+    print(f"final global charge Q : {physical_analysis[2]}")
+    print(f"final hydrophobicity frequency : {physical_analysis[3]}")
+    print(f"{p+1} sequence generated over {npep} \n \n " )
+    score_evolution.append(new_peptide_score)
+    
     helix_proba_evol.append(physical_analysis[1])
     charge_evol.append(physical_analysis[2])
     space_evolution.append(physical_analysis[3])
-    
-    new_peptide_score = score_kmers(new_peptide,6,score_dict)
-
-    # The peptide is selected if new score is higher 
-    score_difference = new_peptide_score - peptide_score
-
-    if score_difference > 0:
-        peptide = new_peptide
-
-    #addtion of randomness : if the mutation is not too much unfavored by the env then it can appen to be selected (To develop)
-    
-    #else:
-    #   probability_of_acceptance = 1**(score_difference/100000)
-    #    if random.random() < probability_of_acceptance:
-    #        peptide = new_peptide
-    progress_bar(count=i+1,total=bootstrap_iterations,size=100,sides="||",full='#',empty=' ',prefix="Performing bootstraps... ")
-
-print("\nFinal peptide : \n")    
-print(peptide)
-print(f"final score : {score_evolution[-1]}")
-print(f"final helix probability : {round(helix_proba_evol[-1], 2)} %")
-print(f"final global charge Q : {charge_evol[-1]}")
-print(f"final hydrophobicity frequency : {space_evolution[-1]}")
-
-plt.plot(bootstrap, score_evolution ,label = "score")   
-plt.plot(bootstrap, helix_proba_evol ,label = "helix probability") 
-plt.plot(bootstrap, charge_evol ,label = "charge") 
-plt.plot(bootstrap, space_evolution ,label = "hydrophobicity space") 
-plt.legend()
-plt.show() 
+    peptides_generated.append(peptide)
+print(score_evolution)
+final_df=pd.DataFrame(list(zip(peptides_generated,score_evolution,charge_evol,space_evolution)),columns =["peptide_sequence", "score" , "charge" , "hydro_frequency"])
+print(final_df)
+#plt.plot(bootstrap, score_evolution ,label = "score")   
+#plt.plot(bootstrap, helix_proba_evol ,label = "helix probability") 
+#plt.plot(bootstrap, charge_evol ,label = "charge") 
+#plt.plot(bootstrap, space_evolution ,label = "hydrophobicity space") 
+#plt.legend()
+#plt.show() 
 '''
 '''
