@@ -83,7 +83,7 @@ def score_kmers(pep_seq , reduce, score_dict ):
       return kmer_score/len(pep_seq)
     
     
-score_file = "unique_set.tsv"
+score_file = 'results/descriptors_activity_scores.tsv'
 ### loading score from computed tsv file ###
 
 print (f"Loading descriptors scores from file : {score_file}")
@@ -139,7 +139,7 @@ data.to_excel("computed_db.xlsx")
 '''
 
 #import substitution probabilities from PAM2 data frame relative to mutation frequencies with conservation excluded
-pam2_prob_matrix=pd.read_excel('PAM_2_substitution_probabilities_formated.xlsx')
+pam2_prob_matrix=pd.read_excel('resources/PAM_2_substitution_probabilities_formated.xlsx')
 print (f"Loading PAM substitution probabilities")
 aa_order='ARNDCQEGHILKMFPSTWYV'
 print (f"Finished loading PAM substitution probabilities \n \n \n")
@@ -151,7 +151,7 @@ for row in pam2_prob_matrix.to_numpy():
     pam2_prob_dict[row[0]]=row[1:]
 
 
-'''
+''' Clustering -> not succesful
 ### visualisation of multidimensionnal data ###
 fig=plt.figure()
 ax=fig.add_subplot(111,projection='3d')
@@ -168,7 +168,7 @@ print('#########################################################################
 npep=50
 peptide = "RGLRRLGRKIAHGVKKYG"
 score_kmers(peptide,6,score_dict)
-bootstrap_iterations = 10
+bootstrap_iterations = 1000
 score_evolution = []
 helix_proba_evol = []
 charge_evol =[]
@@ -177,7 +177,7 @@ peptides_generated=[]
 bootstrap = range(bootstrap_iterations)
 print("Starting generation of {npep}peptides from {bootstrap_iterations} bootstrap iterations \n ")
  
-
+#Test
 for p in range(0,npep):
     peptide = "RGLRRLGRKIAHGVKKYG"
     for i in bootstrap:
@@ -233,6 +233,7 @@ for p in range(0,npep):
 print(score_evolution)
 final_df=pd.DataFrame(list(zip(peptides_generated,score_evolution,charge_evol,space_evolution)),columns =["peptide_sequence", "score" , "charge" , "hydro_frequency"])
 print(final_df)
+
 #plt.plot(bootstrap, score_evolution ,label = "score")   
 #plt.plot(bootstrap, helix_proba_evol ,label = "helix probability") 
 #plt.plot(bootstrap, charge_evol ,label = "charge") 
