@@ -54,11 +54,11 @@ reduce = 6
 
 # Database to be cleaned
 dirty_neg_file_name = "uniprot_neg_db.fasta"
-dirty_pos_file_name = "positive_db_nr.fasta"
+dirty_pos_file_name = "full_positive_db.fasta"
 
 # Clean database containing peptides between 3 and 18 AA
-neg_fastas_file_name = "negative_db_size.fasta"
-pos_fastas_file_name = "positive_db_size.fasta"
+neg_fastas_file_name = "resources/filtered_negative_db.fasta"
+pos_fastas_file_name = "resources/filtered_positive_db.fasta"
 
 # Temporary directories for kmers
 neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
@@ -210,7 +210,7 @@ def produce_scoring (neg_result_file_name, pos_result_file_name):
 
     print("Finished computing scores\nCreate tsv file")
     #save data to tsv file
-    with open("unique_set.tsv" , "w") as save:
+    with open("results/descriptors_activity_scores.tsv", "w") as save:
         unique_set_str = ""
         for kmer in kmers_counter.keys():
             unique_set_str += str(kmer).strip()+'\t'+str(kmers_counter[kmer])+'\n'

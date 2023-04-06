@@ -6,8 +6,8 @@ from collections import defaultdict, Counter
 #Define the color properties and databases
 properties_aa = [["D", "E", "K", "N"], ["H", "F", "Y", "W"], ["A", "V", "L", "I", "G"]]
 color_aa = ["red", "blue", "green"]
-pos_db_name = "positive_db_size.fasta"
-neg_db_name = "negative_db_size.fasta"
+pos_db_name = "filtered_positive_db.fasta"
+neg_db_name = "filtered_negative_db.fasta"
 
 #Define the graph
 fig = plt.figure()

@@ -83,7 +83,7 @@ def score_kmers(pep_seq , reduce, score_dict ):
       return kmer_score/len(pep_seq)
     
     
-score_file = "unique_set.tsv"
+score_file = "results/descriptors_activity_scores.tsv"
 ### loading score from computed tsv file ###
 
 print (f"Loading descriptors scores from file : {score_file}")
@@ -113,7 +113,7 @@ def pep_physical_analysis(peptide):
 
 '''
 ### loading of Real IC50 database ### 
-data= pd.read_excel("antimicrobial_peptide_with_IC_50.xlsx")  # SMAP-18 RGLRRLGRKIAHGVKKYG peptide 
+data= pd.read_excel("AMPs_DB_IC50.xlsx")  # SMAP-18 RGLRRLGRKIAHGVKKYG peptide 
 
 ### computation of scores for each peptide ###
 score =[]

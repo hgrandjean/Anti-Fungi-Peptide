@@ -23,4 +23,4 @@ for fasta in multi_fasta :
     else : 
         pass
 
-SeqIO.write(multi_fasta_size, "negative_db_size.fasta", "fasta")
+SeqIO.write(multi_fasta_size, "filtered_negative_db.fasta", "fasta")

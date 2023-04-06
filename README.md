@@ -54,7 +54,7 @@ Computes physico-chemicals properties of peptides based on their sequences
 - helical distribution of aa along helixes 
 
 
-<img src="positive_db_size_aa_distrib.png" width="300"  >
+<img src="results/filtered_positive_db_aa_distribution.png" width="300"  >
 
 ###### score_peptide.py
 Uses unique_set.tsv file to attribute a score to a given peptide sequence according to descriptors scores computed with kmer_parser.py

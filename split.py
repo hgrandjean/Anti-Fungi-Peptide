@@ -22,6 +22,6 @@ for kmer in kmers_counter.keys() :
     kmers_counter[kmer][2] = math.log((kmers_counter[kmer][0]+1)/(kmers_counter[kmer][1]+1))
 
 #save data to tsv file
-with open("unique_set.tsv" , "w") as save : 
+with open("results/descriptors_activity_scores.tsv", "w") as save :
     for kmer in kmers_counter.keys() : 
       save.write(str(kmer).strip()+'\t'+str(kmers_counter[kmer])+'\n') 

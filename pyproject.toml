@@ -10,6 +10,7 @@ biopython = "*"
 pandas = "*"
 numpy = "*"
 matplotlib = "*"
+shutil = "*"
 
 [tool.poetry.dev-dependencies]
 mypy = "*"

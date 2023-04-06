@@ -16,7 +16,7 @@ from scipy.fft import fft, fftfreq, fftshift , rfft
 
 
 
-multi_fasta = [record for record in SeqIO.parse("positive_db_size.fasta", "fasta")]
+multi_fasta = [record for record in SeqIO.parse("filtered_positive_db.fasta", "fasta")]
 space = np.array([])
 loc = np.array([])
 

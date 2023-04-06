@@ -36,7 +36,7 @@ def plot(pdb_file, cmap='viridis', alpha=0.75, dpi=100, save=True, show=False, o
     ax.set_title("".join(["Batch" if batch_mode else pdb_file]))
 
     # Import 'density_estimate.dat' data file
-    Z = np.fromfile(resource_stream('RamachanDraw', 'data/density_estimate.dat'))
+    Z = np.fromfile(resource_stream('ramachadran_plots', 'data/density_estimate.dat'))
     Z = np.reshape(Z, (100, 100))
 
     ax.set_aspect('equal')
