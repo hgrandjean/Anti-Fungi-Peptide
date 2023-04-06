@@ -1,5 +1,5 @@
 ### import dependencies ####
-from kmer_parser import reduce_seq , gap_kmer , find_kmer
+from __main__ import reduce_seq , gap_kmer , find_kmer
 import pandas as pd 
 import matplotlib.pyplot as plt
 import seaborn as sns 
