@@ -12,9 +12,11 @@ from scipy.signal import find_peaks
 
 from kmer_parser import find_kmer
 
-from rich import print as rich_print
+from rich import box, print as rich_print
 from rich.panel import Panel
 from rich.progress import BarColumn, Progress, SpinnerColumn, MofNCompleteColumn, TaskID, TextColumn, TimeElapsedColumn
+from rich.table import Table
+from rich.align import Align
 
 print(
     "                                                                                                                                                       "
@@ -171,7 +173,6 @@ def score_kmers(pep_seq, reduce, score_dict):
 
 
 def load_descriptors_score(score_file: str = SCORE_FILE) -> dict:
-    rich_print(Panel(f"Loading descriptors scores from file : {score_file}", style="light_slate_blue"))
     score_dict = {}
     with open(score_file, "r") as scores:
         for line in scores:
@@ -200,8 +201,6 @@ def pep_physical_analysis(peptide):
 
 def generate_prob_dict_from_excel(file_name: str = PAM2_EXCEL_FILE) -> dict:
     pam2_prob_matrix = pd.read_excel(file_name)
-    print(f"Loading PAM substitution probabilities")
-    print(f"Finished loading PAM substitution probabilities \n \n \n")
 
     # Convert the DataFrame to a dictionary
     pam2_prob_dict = {}
@@ -211,8 +210,9 @@ def generate_prob_dict_from_excel(file_name: str = PAM2_EXCEL_FILE) -> dict:
 
 
 def generate_peptides(
-    aa_probs: dict, nb_peptide: int = NB_PEPTIDE, peptide: str = DEFAULT_PEPTIDE, bootstrap: int = NB_ITERATIONS
+    aa_probs: dict, nb_peptide: int = NB_PEPTIDE, default_peptide: str = DEFAULT_PEPTIDE, bootstrap: int = NB_ITERATIONS
 ):
+    Align(rich_print(Panel(f"Generation of {nb_peptide} peptides", style="light_slate_blue", expand=False)))
     # Test
     score_evolution = []
     helix_proba_evol = []
@@ -221,6 +221,7 @@ def generate_peptides(
     peptides_generated = []
 
     for p in range(0, nb_peptide):
+        peptide = default_peptide
         with default_progress() as progress:
             task_id: TaskID = progress.add_task(f"Generating peptide number {p+1} out of {nb_peptide}", total=bootstrap)
             for i in range(bootstrap):
@@ -246,8 +247,9 @@ def generate_peptides(
 
                 # The peptide is selected if new score is higher
                 score_difference = new_peptide_score - peptide_score
+                #print(f"current score: {peptide_score} ; new score: {new_peptide_score}")
 
-                if score_difference > 0:
+                if new_peptide_score - peptide_score > 0:
                     peptide = new_peptide
 
                 # addtion of randomness : if the mutation is not too much unfavored by the env then it can appen to be selected (To develop)
@@ -260,24 +262,41 @@ def generate_peptides(
                 # progress bar HERE
                 progress.update(task_id, advance=1)
 
+        '''
         rich_print("\nFinal peptide : \n")
         rich_print(peptide)
         rich_print(f"final score : {score_kmers(peptide,6,score_dict)}")
         rich_print(f"final helix probability : {round(physical_analysis[1], 2)} %")
         rich_print(f"final global charge Q : {physical_analysis[2]}")
         rich_print(f"final hydrophobicity frequency : {physical_analysis[3]}")
-        rich_print(f"{p+1} sequence generated over {nb_peptide}\n ")
-        score_evolution.append(new_peptide_score)
+        '''
 
+        table = Table(
+            title=f"[i]Result of peptide[/] [b royal_blue1]{peptide}",
+            show_header=False,
+            box=box.ROUNDED,
+            style="cyan",
+            title_style=""
+        )
+        table.add_row("Final score", f"{score_kmers(peptide,6,score_dict)}")
+        table.add_row("Final helix probability", f"{round(physical_analysis[1], 2)}%")
+        table.add_row("Final global charge Q", f"{physical_analysis[2]}")
+        table.add_row("Final hydrophobicity frequency", f"{physical_analysis[3]}")
+
+        rich_print("\n", table, "\n")
+
+
+        score_evolution.append(new_peptide_score)
         helix_proba_evol.append(physical_analysis[1])
         charge_evol.append(physical_analysis[2])
         space_evolution.append(physical_analysis[3])
         peptides_generated.append(peptide)
-    print(score_evolution)
+    #print(score_evolution)
     final_df = pd.DataFrame(
         list(zip(peptides_generated, score_evolution, charge_evol, space_evolution)),
         columns=["peptide_sequence", "score", "charge", "hydro_frequency"],
     )
+    rich_print(Align(Panel("Generated peptides and their respectives properties", style="light_slate_blue", expand=False), align="center"))
     print(final_df)
 
 
@@ -289,7 +308,7 @@ if __name__ == "__main__":
     pam2_probs = generate_prob_dict_from_excel()
 
     ### generation and optimisation of a peptide sequence
-    generate_peptides(pam2_probs)
+    generate_peptides(pam2_probs, bootstrap=2)
 
 
 """
