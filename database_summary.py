@@ -1,7 +1,9 @@
 from kmer_parser import parse_fasta_file
+from collections import Counter, defaultdict
+
+
 import matplotlib.pyplot as plt
 from Bio import SeqIO
-from collections import defaultdict, Counter
 
 #Define the color properties and databases
 properties_aa = [["D", "E"], ["K", "R", "H"], ["N", "Q", "S","T", "Y"], ["F", "C", "W", "A", "V", "L", "I", "G", "M"], ["P"]]
@@ -20,7 +22,7 @@ Red: proline
 pos_db_name = "resources/filtered_positive_db.fasta"
 neg_db_name = "resources/filtered_negative_db.fasta"
 
-#Define the graph
+# Define the graph
 fig = plt.figure()
 ax = fig.add_subplot()
 fig.subplots_adjust(top=0.5)
@@ -34,13 +36,13 @@ ax.set_ylabel('Sizes in terms of occurrence')
 #Get fasta file, sort sequences and plot
 def sort_aa_positions(db_file):
     db_fastas = parse_fasta_file(db_file)
-    print ("Parsing fasta files")
+    print("Parsing fasta files")
     position_counts = defaultdict(list)
     for fasta in db_fastas:
         seq = fasta.seq
         for position, aa in enumerate(list(seq)):
             position_counts[position].append(aa)
-    count = {k:Counter(v) for k, v in position_counts.items()}
+    count = {k: Counter(v) for k, v in position_counts.items()}
 
     font_size = 0
     color_default = "black"
@@ -50,16 +52,18 @@ def sort_aa_positions(db_file):
             for position_aa in range(len(count)):
                 if aa in count[position_aa]:
                     counted_value = count[position_aa][aa]
-                    font_size = (counted_value/40)*35
+                    font_size = (counted_value / 40) * 35
                     for color in range(len(properties_aa)):
-                        if aa in properties_aa[color]: color_default = color_aa[color]
-                    ax.text(position_aa, y_pos, aa, color = color_default, fontsize = font_size)
+                        if aa in properties_aa[color]:
+                            color_default = color_aa[color]
+                    ax.text(position_aa, y_pos, aa, color=color_default, fontsize=font_size)
                     del count[position_aa][aa]
+
 
 y_pos = 0.05
 sort_aa_positions(pos_db_name)
 ax.text(5, 0.5, "Positive database", color = "black", fontsize = 10)
 y_pos = -0.15
 sort_aa_positions(neg_db_name)
-ax.text(5, -0.5, "Negative database", color = "black", fontsize = 10)
+ax.text(5, -0.5, "Negative database", color="black", fontsize=10)
 plt.show()
