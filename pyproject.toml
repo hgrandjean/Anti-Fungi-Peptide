@@ -15,6 +15,7 @@ numpy = "^1.24.3"
 seaborn = "^0.12.2"
 sklearn = "^0.0.post5"
 statsmodels = "^0.14.0"
+rich = "^13.3.5"
 
 [tool.poetry.dev-dependencies]
 mypy = "*"
