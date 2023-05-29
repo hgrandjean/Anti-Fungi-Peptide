@@ -4,6 +4,3 @@ numpy
 matplotlib
 scipy
 helixvis
-seaborn
-sklearn
-statsmodels
