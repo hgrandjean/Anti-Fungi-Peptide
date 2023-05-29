@@ -3,38 +3,23 @@ from collections import Counter, defaultdict
 
 
 import matplotlib.pyplot as plt
+
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
 
-#Define the color properties and databases
-properties_aa = [["D", "E"], ["K", "R", "H"], ["N", "Q", "S","T", "Y"], ["F", "C", "W", "A", "V", "L", "I", "G", "M"], ["P"]]
-color_aa = ["grey", "blue", "green", "orange", "red"]
-
-'''
-The categories of the AA are set in accordance with the used reduction dictionary, with the exception of P, which is considered as a unique AA
-
-Grey: hydrophilic, negatively charged
-Blue: hydrophilic, positively charged
-Green: hydrophilic, uncharged
-Orange: hydrophobic
-Red: proline 
-'''
-
-pos_db_name = "resources/filtered_positive_db.fasta"
-neg_db_name = "resources/filtered_negative_db.fasta"
+# Define the color properties and databases
+PROPERTIES_AA = [["D", "E", "K", "N"], ["H", "F", "Y", "W"], ["A", "V", "L", "I", "G"]]
+COLOR_AA = ["red", "blue", "green"]
+POS_DB_NAME = "resources/filtered_positive_db.fasta"
+NEG_DB_NAME = "resources/filtered_negative_db.fasta"
 
 # Define the graph
 fig = plt.figure()
 ax = fig.add_subplot()
 fig.subplots_adjust(top=0.5)
 
-#Set titles for the figure and the subplot, respectively
-ax.axis([0, 18, -1, 1])
-ax.text(0, 1.2, 'Frequencies of AA at different positions', fontsize = 10, fontweight = 'bold')
-ax.set_xlabel('Amino acid positions')
-ax.set_ylabel('Sizes in terms of occurrence')
-
-#Get fasta file, sort sequences and plot
-def sort_aa_positions(db_file):
+# Get fasta file, sort their sequinces and plot
+def sort_aa_positions(db_file: str):
     db_fastas = parse_fasta_file(db_file)
     print("Parsing fasta files")
     position_counts = defaultdict(list)
@@ -53,17 +38,25 @@ def sort_aa_positions(db_file):
                 if aa in count[position_aa]:
                     counted_value = count[position_aa][aa]
                     font_size = (counted_value / 40) * 35
-                    for color in range(len(properties_aa)):
-                        if aa in properties_aa[color]:
-                            color_default = color_aa[color]
+                    for color in range(len(PROPERTIES_AA)):
+                        if aa in PROPERTIES_AA[color]:
+                            color_default = COLOR_AA[color]
                     ax.text(position_aa, y_pos, aa, color=color_default, fontsize=font_size)
                     del count[position_aa][aa]
 
 
-y_pos = 0.05
-sort_aa_positions(pos_db_name)
-ax.text(5, 0.5, "Positive database", color = "black", fontsize = 10)
-y_pos = -0.15
-sort_aa_positions(neg_db_name)
-ax.text(5, -0.5, "Negative database", color="black", fontsize=10)
-plt.show()
+if __name__ == "__main__":
+    # Set titles for the figure and the subplot respectively
+    ax.axis([0, 18, -1, 1])
+    ax.text(-1, 1.1, "Summary of databases with amino acid occurences and positions", fontsize=10, fontweight="bold")
+    ax.set_xlabel("Amino Acid positions")
+    ax.set_ylabel("Sizes in terms of occurrence")
+
+    # Generate the plot
+    y_pos = 0.05
+    sort_aa_positions(POS_DB_NAME)
+    ax.text(5, 0.5, "Positive database", color="black", fontsize=10)
+    y_pos = -0.15
+    sort_aa_positions(NEG_DB_NAME)
+    ax.text(5, -0.5, "Negative database", color="black", fontsize=10)
+    plt.show()
