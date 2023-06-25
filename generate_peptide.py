@@ -180,7 +180,10 @@ ax.set_zlabel("helix_prob")
 plt.show()
 '''
 
-### generation and optimisation of a peptide sequence
+'''
+Generation and optimisation of a peptide sequence
+'''
+
 print('####################################################################################################################################################### \n \n \n')
 n_pep = 30
 pep_seq = "RGLRRLGRKIAHGVKKYG"

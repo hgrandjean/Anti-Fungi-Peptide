@@ -50,10 +50,11 @@ def sort_aa_positions(db_file):
                         if aa in properties_aa[color]: color_default = color_aa[color]
                     ax.text(position_aa, y_pos, aa, color = color_default, fontsize = font_size)
                     del count[position_aa][aa]
+
 y_pos = 0.05
 sort_aa_positions(pos_db_name)
-ax.text(5, 0.5, "Positive database", color="black", fontsize=10)
+ax.text(5, 0.5, "Positive database", color = "black", fontsize = 10)
 y_pos = -0.15
 sort_aa_positions(neg_db_name)
-ax.text(5, -0.5, "Negative database", color="black", fontsize=10)
+ax.text(5, -0.5, "Negative database", color = "black", fontsize = 10)
 plt.show()
