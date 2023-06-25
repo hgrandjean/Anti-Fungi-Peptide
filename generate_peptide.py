@@ -1,21 +1,20 @@
-### import dependencies ####
-from kmer_parser import reduce_seq , gap_kmer , find_kmer
-import pandas as pd 
+### import dependencies
+from kmer_parser import reduce_seq, gap_kmer, find_kmer
 import matplotlib.pyplot as plt
 import seaborn as sns 
 import numpy as np
 import math 
 import random
 import sys
-from scipy import signal
 from scipy.signal import find_peaks
 from Bio import SeqIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis 
-from Bio.SeqUtils import ProtParamData  # Local https://github.com/biopython/biopython/blob/master/Bio/SeqUtils/ProtParamData.py
+from Bio.SeqUtils import ProtParamData
 from Bio.SeqUtils import IsoelectricPoint  # Local
 from Bio.Seq import Seq
 from Bio.Data import IUPACData
 from Bio.SeqUtils import molecular_weight
+import pandas as pd
 
 print( '                                                                                                                                                       ' )
 print( '                                                                                                                                                       ' )
@@ -152,7 +151,7 @@ for row in pam2_prob_matrix.to_numpy():
 
 
 ''' Clustering -> not succesful
-### visualisation of multidimensionnal data ###
+### visualisation of multidimensional data ###
 fig=plt.figure()
 ax=fig.add_subplot(111,projection='3d')
 n=100
@@ -165,7 +164,7 @@ plt.show()
 
 ### generation and optimisation of a peptide sequence
 print('####################################################################################################################################################### \n \n \n')
-npep=50
+npep=30
 peptide = "RGLRRLGRKIAHGVKKYG"
 score_kmers(peptide,6,score_dict)
 bootstrap_iterations = 1000
@@ -231,11 +230,12 @@ for p in range(0,npep):
     space_evolution.append(physical_analysis[3])
     peptides_generated.append(peptide)
 print(score_evolution)
-final_df=pd.DataFrame(list(zip(peptides_generated,score_evolution,charge_evol,space_evolution)),columns =["peptide_sequence", "score" , "charge" , "hydro_frequency"])
+final_df=pd.DataFrame(list(zip(peptides_generated,score_evolution, charge_evol,space_evolution)),columns =["peptide_sequence", "score" ,  "charge" , "hydro_frequency"])
 print(final_df)
+final_df.to_excel('results/de_novo_peptide_library.xlsx')
 
-#plt.plot(bootstrap, score_evolution ,label = "score")   
-#plt.plot(bootstrap, helix_proba_evol ,label = "helix probability") 
+#plt.plot(bootstrap, score_evolution ,label = "score")
+#plt.plot(bootstrap, helix_proba_evol ,label = "helix probability")
 #plt.plot(bootstrap, charge_evol ,label = "charge") 
 #plt.plot(bootstrap, space_evolution ,label = "hydrophobicity space") 
 #plt.legend()
