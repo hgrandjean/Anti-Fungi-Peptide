@@ -219,17 +219,17 @@ def produce_scoring (neg_result_file_name, pos_result_file_name):
         if kmer in kmers_counter.keys() : 
             kmers_counter[kmer][0] += 1
         else:
-            kmers_counter[kmer] = [1,0,0]
+            kmers_counter[kmer] = [1, 0, 0]
     for kmer in negative:
         if kmer in kmers_counter.keys() : 
             kmers_counter[kmer][1] += 1
         else:
-            kmers_counter[kmer] = [0,1, 0]
+            kmers_counter[kmer] = [0, 1, 0]
 
     print ("Finished counting the occurrences\nStart computing scores")
     # Score attribution to each descriptor
     for kmer in kmers_counter.keys():
-        kmers_counter[kmer][2] = math.log((kmers_counter[kmer][0]+1)/(kmers_counter[kmer][1]+1))
+        kmers_counter[kmer][2] = math.log((kmers_counter[kmer][0] + 1)/(kmers_counter[kmer][1] + 1))
 
     print("Finished computing scores\nCreate .tsv file")
     # Save data to .tsv file
