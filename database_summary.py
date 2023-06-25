@@ -20,13 +20,13 @@ def parse_fasta_file (file_name):
     print(f"Ended parsing of {file_name}")
     return multi_fasta
 
-# Set titles for the figure and the subplot respectively
+#Set titles for the figure and the subplot, respectively
 ax.axis([0, 18, -1, 1])
-ax.text(-1, 1.1, 'Summary of databases with amino acid occurences and positions', fontsize=10, fontweight='bold')
+ax.text(-1, 1.1, 'Summary of databases with amino acid frequencies and positions', fontsize=10, fontweight='bold')
 ax.set_xlabel('Amino Acid positions')
 ax.set_ylabel('Sizes in terms of occurrence')
 
-#Get fasta file, sort their sequinces and plot
+#Get fasta file, sort sequences and plot
 def sort_aa_positions(db_file):
     db_fastas = parse_fasta_file(db_file)
     print ("Parsing fasta files")
