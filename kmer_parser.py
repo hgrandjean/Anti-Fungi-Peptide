@@ -20,12 +20,15 @@ import math
 Objective: reduce AA sequence complexity using physico-chemical properties
 
 Reduction dictionaries encoding: 
+
 RED1: Hydrophobicity. A = hydrophobic; B = hydrophilic;
-RED2: Chemical properties. A = hydrophobic; B = hydrophilic; C = Aromatic; D = Polar; E = Acidic; F = Basic; G = Ionizable;
+RED2: Chemical properties. A = hydrophobic; B = hydrophilic; C = Aromatic; D = Polar; E = Acidic; F = Basic; 
+G = Ionizable;
 RED3: Solvent accessibility. A = low; B = medium; C = high
 RED4: Hydrophobicity and charge. A = hydrophobic; B = hydrophilic ; C = charged
 RED5: Hydrophobicity and structure.  A = hydrophilic; B = hydrophobic; C = structural
-RED6: Hydrophobicity, size and charge. A = Large and hydrophobic; B = small and hydrophobic; P = positive hydrophilic; U = uncharged hydrophilic; N = negative hydrophilic
+RED6: Hydrophobicity, size and charge. A = Large and hydrophobic; B = small and hydrophobic; P = positive hydrophilic; 
+U = uncharged hydrophilic; N = negative hydrophilic
 
 '''
 
@@ -50,9 +53,8 @@ reduction_dictionaries: dict[str, list[str]] = {
     'V' : ['A','A','A','B','B', 'A'], #Valine
     'W' : ['B','-','A','A','A', 'A'], #Tryptophan
     'Y' : ['B','G','A','A','A', 'U'], #Tyrosine
-    
     'r' : ['B','F','C','C','A', 'P'], #Arginine
-    'J' : ['B','F','C','C','A', 'P'], #un-usual amino-acid
+    'J' : ['B','F','C','C','A', 'P'], #unusual amino-acid
 }
 
 # Database to be cleaned
@@ -188,7 +190,7 @@ def clean_database (db_file_name, clean_db_file_name):
     print (f"Output clean database in {clean_db_file_name}")
 
 def produce_scoring (neg_result_file_name, pos_result_file_name):
-    print ("Producing scoring")
+    print ("Scoring")
     with open (pos_temp_path + pos_result_file_name , "r") as pos :
         positive = pos.readlines()
     with open (neg_temp_path + neg_result_file_name , "r") as neg :
@@ -200,12 +202,12 @@ def produce_scoring (neg_result_file_name, pos_result_file_name):
     for kmer in positive:
         if kmer in kmers_counter.keys() : 
             kmers_counter[kmer][0] += 1
-        else : 
+        else:
             kmers_counter[kmer] = [1,0,0]
     for kmer in negative:
         if kmer in kmers_counter.keys() : 
             kmers_counter[kmer][1] += 1
-        else : 
+        else:
             kmers_counter[kmer] = [0,1, 0]
 
     print ("Finished counting the occurrences\nStart computing scores")
