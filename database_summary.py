@@ -15,7 +15,7 @@ ax = fig.add_subplot()
 fig.subplots_adjust(top=0.5)
 
 #Parse the fasta file
-def parse_fasta_file (file_name):
+def parse_fasta_file (file_name) -> list[str]:
     multi_fasta = [record for record in SeqIO.parse(file_name, "fasta")]
     print(f"Ended parsing of {file_name}")
     return multi_fasta
