@@ -29,7 +29,7 @@ RED6: Hydrophobicity, size and charge. A = Large and hydrophobic; B = small and 
 
 '''
 
-reduction_dictionaries: dict[str | Any, list[str] | Any] = {
+reduction_dictionaries: dict[str, list[str]] = {
     'A' :['A','A','B','B','B', 'B'], #Alanine
     'C' :['B','G','A','A','A', 'B'], #Cysteine
     'D' :['B','E','C','C','A', 'N'], #Aspartic acid
@@ -54,8 +54,6 @@ reduction_dictionaries: dict[str | Any, list[str] | Any] = {
     'r' : ['B','F','C','C','A', 'P'], #Arginine
     'J' : ['B','F','C','C','A', 'P'], #un-usual amino-acid
 }
-# Reduction dictionary in use
-reduce = 6 
 
 # Database to be cleaned
 dirty_neg_file_name = "uniprot_neg_db.fasta"
@@ -69,7 +67,7 @@ pos_fastas_file_name = "resources/filtered_positive_db.fasta"
 neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
 pos_temp_path = "".join(os.getcwd() + "/kmr_pos_temp/")
 
-def reduce_seq (sequence, r_dict = reduce, dictionary = reduction_dictionaries):
+def reduce_seq (sequence, r_dict = 6, dictionary = None):
     """ transforms sequence using AA characteristics in proteins:
     __ Args __ 
     sequence (Seq): AA sequence in single letter codification 
@@ -78,6 +76,8 @@ def reduce_seq (sequence, r_dict = reduce, dictionary = reduction_dictionaries):
     __ Returns __ 
     reduced AA sequence using transformation dictionary
     """
+    if dictionary is None:
+        dictionary = reduction_dictionaries
     reduced_seq = ""
     for aa in sequence:
         if aa not in dictionary.keys():
