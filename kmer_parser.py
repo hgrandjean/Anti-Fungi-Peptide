@@ -26,7 +26,7 @@ RED2: Chemical properties. A = hydrophobic; B = hydrophilic; C = Aromatic; D = P
 G = Ionizable;
 RED3: Solvent accessibility. A = low; B = medium; C = high
 RED4: Hydrophobicity and charge. A = hydrophobic; B = hydrophilic ; C = charged
-RED5: Hydrophobicity and structure.  A = hydrophilic; B = hydrophobic; C = structural
+RED5: Hydrophobicity and structure (proline).  A = hydrophilic; B = hydrophobic; C = proline
 RED6: Hydrophobicity, size and charge. A = Large and hydrophobic; B = small and hydrophobic; P = positive hydrophilic; 
 U = uncharged hydrophilic; N = negative hydrophilic
 
@@ -47,14 +47,14 @@ reduction_dictionaries: dict[str, list[str]] = {
     'N' : ['B','D','C','A','A', 'U'], #Asparagine
     'P' : ['B','B','C','A','C', 'B'], #Proline
     'Q' : ['B','D','C','A','A', 'U'], #Glutamine
-    'R' : ['B','F','C','C','A', 'P'], #Arginine
+    'R' : ['B','F','C','C','A', 'P'],
+    'r' : ['B','F','C','C','A', 'P'], #Arginine
     'S' : ['B','D','B','A','A', 'U'], #Serine
     'T' : ['B','D','B','A','A', 'U'], #Threonine
     'V' : ['A','A','A','B','B', 'A'], #Valine
     'W' : ['B','-','A','A','A', 'A'], #Tryptophan
     'Y' : ['B','G','A','A','A', 'U'], #Tyrosine
-    'r' : ['B','F','C','C','A', 'P'], #Arginine
-    'J' : ['B','F','C','C','A', 'P'], #unusual amino-acid
+    'J' : ['B','F','C','C','A', 'P'], #Custom amino acid
 }
 
 # Selected reduction dictionary
