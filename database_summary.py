@@ -22,8 +22,8 @@ def parse_fasta_file (file_name) -> list[str]:
 
 #Set titles for the figure and the subplot, respectively
 ax.axis([0, 18, -1, 1])
-ax.text(-1, 1.1, 'Summary of databases with amino acid frequencies and positions', fontsize=10, fontweight='bold')
-ax.set_xlabel('Amino Acid positions')
+ax.text(0, 1.2, 'Frequencies of AA at different positions', fontsize = 10, fontweight = 'bold')
+ax.set_xlabel('Amino acid positions')
 ax.set_ylabel('Sizes in terms of occurrence')
 
 #Get fasta file, sort sequences and plot
