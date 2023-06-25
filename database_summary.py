@@ -48,7 +48,7 @@ def sort_aa_positions(db_file):
                     font_size = (counted_value/40)*35
                     for color in range(len(properties_aa)):
                         if aa in properties_aa[color]: color_default = color_aa[color]
-                    ax.text(position_aa, y_pos, aa, color=color_default, fontsize=font_size)  
+                    ax.text(position_aa, y_pos, aa, color = color_default, fontsize = font_size)
                     del count[position_aa][aa]
 y_pos = 0.05
 sort_aa_positions(pos_db_name)
