@@ -50,10 +50,10 @@ print( '                                                                        
 print('\n \n \n #######################################################################################################################################################')
 
 
-def progress_bar(count,total,size=100,sides="[]",full='#',empty='.',prefix=""):
-    x = int(size*count/total)
-    sys.stdout.write("\r" + prefix + sides[0] + full*x + empty*(size-x) + sides[1] + ' ' + str(count).rjust(len(str(total)),' ')+"/"+str(total))
-    if count==total:
+def progress_bar(count, total, size = 100, sides = "[]", full = '#', empty = '.', prefix = ""):
+    x = int(size * count/total)
+    sys.stdout.write("\r" + prefix + sides[0] + full * x + empty * (size - x) + sides[1] + ' ' + str(count).rjust(len(str(total)),' ') + "/" + str(total))
+    if count == total:
         sys.stdout.write("\n")
 
 '''
@@ -64,14 +64,14 @@ Uses find_kmer function from kmer_parser
 # Loading score from computed .tsv file
 score_file = 'results/descriptors_activity_scores.tsv'
 
-print (f"Loading descriptors scores from file : {score_file}")
-score_dict = {}
-with open(score_file, "r" ) as scores :
+print (f"Loading descriptors scores from file: {score_file}")
+score_dict: dict = {}
+with open(score_file, "r" ) as scores:
     for line in scores:
         key, value = line.removesuffix('\n').split('\t')
         value =  value.strip('][').split(', ')
-        value = [float(x) for x in value ]
-        score_dict[key] = value 
+        value = [float(x) for x in value]
+        score_dict[key] = value
 print ("Finished loading scores")
 print('####################################################################################################################################################### \n \n \n')
 
@@ -152,17 +152,16 @@ Import substitution probabilities from PAM2 Dataframe relative to mutation frequ
 
 pam2_prob_matrix = pd.read_excel('resources/PAM_2_substitution_probabilities_formated.xlsx')
 print (f"Loading PAM substitution probabilities")
-aa_order='ARNDCQEGHILKMFPSTWYV'
+AA_order = 'ARNDCQEGHILKMFPSTWYV'
 print (f"Finished loading PAM substitution probabilities \n \n \n")
 
-
-# Convert the DataFrame to a dictionary
+# Convert the Dataframe into a dictionary
 pam2_prob_dict = {}
 for row in pam2_prob_matrix.to_numpy():
     pam2_prob_dict[row[0]]=row[1:]
 
 
-''' Clustering -> not succesful
+''' Clustering -> not successful
 ### visualisation of multidimensional data ###
 fig=plt.figure()
 ax=fig.add_subplot(111,projection='3d')
@@ -176,73 +175,73 @@ plt.show()
 
 ### generation and optimisation of a peptide sequence
 print('####################################################################################################################################################### \n \n \n')
-npep=30
-peptide = "RGLRRLGRKIAHGVKKYG"
-score_kmers(peptide,6,score_dict)
+n_pep = 30
+pep_seq = "RGLRRLGRKIAHGVKKYG"
+score_kmers (pep_seq, 6, score_dict)
 bootstrap_iterations = 1000
 score_evolution = []
-helix_proba_evol = []
-charge_evol =[]
+helix_propensity_evolution = []
+charge_evolution =[]
 space_evolution = []
-peptides_generated=[]
+peptides_generated = []
 bootstrap = range(bootstrap_iterations)
 print("Starting generation of {npep}peptides from {bootstrap_iterations} bootstrap iterations \n ")
  
 #Test
-for p in range(0,npep):
-    peptide = "RGLRRLGRKIAHGVKKYG"
+for p in range(0,n_pep):
+    pep_seq = "RGLRRLGRKIAHGVKKYG"
     for i in bootstrap:
-        # randomisation of mutation location in the peptide sequence should be applied to biological form (To develop)
-        random_index = random.randint(0, len(peptide) - 1)
+        # Randomisation of mutation location in the peptide sequence should be applied to biological form (To develop)
+        random_index = random.randint(0, len(pep_seq) - 1)
         
-        #replacing the amino acid selected to a knew one 
-        random_amino_acid = peptide[random_index]
+        # Replacing the amino acid selected to a knew one
+        random_amino_acid = pep_seq[random_index]
         prob = pam2_prob_dict[random_amino_acid]
-        new_amino_acid = random.choices(aa_order, prob, k=1)[0]
-        new_peptide = peptide[:random_index] + new_amino_acid + peptide[random_index+1:]
+        new_amino_acid = random.choices(AA_order, prob, k=1)[0]
+        new_peptide = pep_seq[:random_index] + new_amino_acid + pep_seq[random_index + 1:]
     
-        # Calculating scores of previous and new peptides sequences 
-        peptide_score = score_kmers(peptide,6,score_dict)
+        # Calculating scores of previous and new peptide sequences
+        peptide_score = score_kmers(pep_seq, 6, score_dict)
         #score_evolution.append(peptide_score)
         
-        physical_analysis = pep_physical_analysis(peptide)
+        physical_analysis = pep_physical_analysis(pep_seq)
         #helix_proba_evol.append(physical_analysis[1])
         #charge_evol.append(physical_analysis[2])
         #space_evolution.append(physical_analysis[3])
         
         new_peptide_score = score_kmers(new_peptide,6,score_dict)
     
-        # The peptide is selected if new score is higher 
+        # The peptide is selected if the new score is higher
         score_difference = new_peptide_score - peptide_score
     
         if score_difference > 0:
-            peptide = new_peptide
+            pep_seq = new_peptide
     
-        #addtion of randomness : if the mutation is not too much unfavored by the env then it can appen to be selected (To develop)
+        # Addition of randomness: if the mutation is not unfavored by the environment then it can happen to be selected (to develop)
         
-        #else:
+        # else:
         #   probability_of_acceptance = 1**(score_difference/100000)
         #    if random.random() < probability_of_acceptance:
         #        peptide = new_peptide
-        progress_bar(count=i+1,total=bootstrap_iterations,size=100,sides="||",full='#',empty=' ',prefix="Performing bootstraps... ")
+        progress_bar (count = i+1, total = bootstrap_iterations, size = 100, sides = "||", full = '#',empty = ' ', prefix ="Performing bootstraps... ")
     
-    
-    
-    print("\nFinal peptide : \n")    
-    print(peptide)
-    print(f"final score : {score_kmers(peptide,6,score_dict)}")
-    print(f"final helix probability : {round(physical_analysis[1], 2)} %")
-    print(f"final global charge Q : {physical_analysis[2]}")
-    print(f"final hydrophobicity frequency : {physical_analysis[3]}")
-    print(f"{p+1} sequence generated over {npep} \n \n " )
+
+    print("\nFinal peptide: \n")
+    print(pep_seq)
+    print(f"final score: {score_kmers(pep_seq, 6, score_dict)}")
+    print(f"final helix propensity: {round(physical_analysis[1], 2)} %")
+    print(f"final global charge Q: {physical_analysis[2]}")
+    print(f"final hydrophobicity frequency: {physical_analysis[3]}")
+    print(f"{p+1} sequence generated over {n_pep} \n \n " )
     score_evolution.append(new_peptide_score)
     
-    helix_proba_evol.append(physical_analysis[1])
-    charge_evol.append(physical_analysis[2])
+    helix_propensity_evolution.append(physical_analysis[1])
+    charge_evolution.append(physical_analysis[2])
     space_evolution.append(physical_analysis[3])
-    peptides_generated.append(peptide)
+    peptides_generated.append(pep_seq)
+
 print(score_evolution)
-final_df=pd.DataFrame(list(zip(peptides_generated,score_evolution, charge_evol,space_evolution)),columns =["peptide_sequence", "score" ,  "charge" , "hydro_frequency"])
+final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, space_evolution)), columns =["peptide_sequence", "score" , "charge" , "hydro_frequency"])
 print(final_df)
 final_df.to_excel('results/de_novo_peptide_library.xlsx')
 
