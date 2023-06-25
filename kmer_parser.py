@@ -57,6 +57,9 @@ reduction_dictionaries: dict[str, list[str]] = {
     'J' : ['B','F','C','C','A', 'P'], #unusual amino-acid
 }
 
+# Selected reduction dictionary
+reduce = 6
+
 # Database to be cleaned
 dirty_neg_file_name = "uniprot_neg_db.fasta"
 dirty_pos_file_name = "full_positive_db.fasta"
@@ -69,76 +72,84 @@ pos_fastas_file_name = "resources/filtered_positive_db.fasta"
 neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
 pos_temp_path = "".join(os.getcwd() + "/kmr_pos_temp/")
 
-def reduce_seq (sequence, r_dict = 6, dictionary = None):
-    """ transforms sequence using AA characteristics in proteins:
+def reduce_seq (sequence: str, r_dict: int = reduce, dictionary = None) -> str:
+    """ Transforms sequence using AA characteristics in proteins:
     __ Args __ 
-    sequence (Seq): AA sequence in single letter codification 
-    r_dict (dict) : transformation dictionary in single letter codification
+    sequence (str): AA sequence in single letter codification
+    r_dict (int): number of a reduction dictionary in single-letter codification
     
-    __ Returns __ 
-    reduced AA sequence using transformation dictionary
+    __ Output __
+    reduced_seq (str): reduced AA sequence using transformation dictionary
     """
     if dictionary is None:
         dictionary = reduction_dictionaries
+
     reduced_seq = ""
     for aa in sequence:
         if aa not in dictionary.keys():
             pass
-        else : 
+        else:
             reduced_seq += dictionary[aa][r_dict - 1]
     return reduced_seq 
 
-def hash_kmer (kmer):
+def hash_kmer (kmer: str) -> str:
     """
-    Hash a k-mer using the SHA-256 algorithm
-    Args:
-        kmer (str): The k-mer to hash
-    Returns:
-        str: The hashed k-mer
+    Hashes a k-mer using the SHA-256 algorithm
     """
     hashed_kmer = hashlib.sha256(kmer.encode()).hexdigest()
     return hashed_kmer
 
-def gap_kmer (kmers):
+def gap_kmer (kmers) -> set:
     """
     Introduce gaps into the sequentially processed sequence
     """
     k_gap = []
-    for kmer in kmers : 
-        for z in range(0,len(kmer)) :
-            if kmer[z] != "_" :
-                k_gap.append("".join(kmer[:z] + "_" + kmer[z+1 :]))
+    for kmer in kmers:
+        for i in range(0, len(kmer)):
+            if kmer[i] != "_":
+                k_gap.append("".join(kmer[:i] + "_" + kmer[i+1 :]))
     return set(k_gap) 
 
-def find_kmer (sequence, kmer_size, ngap, reduce):
+def find_kmer (sequence: str, kmer_size: int, n_gap: int, r_dict: int = reduce) -> list[str]:
     """
     Find descriptors in the reduced peptide sequence
+    __Args__
+    kmer_size (int): length of the kmer
+    r_dict (int): number of a reduction dictionary in single-letter codification
+    n_gap (int): number of gaps possible
+
+    __Output__
+    kmers (list[str]): list of found potential descriptors
     """
+
     kmers = []
-    if reduce != None :
-        sequence = reduce_seq(sequence, r_dict=reduce, dictionary=reduction_dictionaries)
-    for i in range (len(sequence)):
-        if i+ kmer_size <= len(sequence):
-                kmers .append (sequence[i:i+kmer_size])
+
+    if r_dict is not None:
+        sequence = reduce_seq(sequence, r_dict, reduction_dictionaries)
+    for i in range(len(sequence)):
+        if i + kmer_size <= len(sequence):
+                kmers.append (sequence[i : i + kmer_size])
     
     current_kmers = kmers
-    for k in range (ngap):
+    for k in range (n_gap):
         current_kmers = gap_kmer(current_kmers)
         kmers += current_kmers
 
     #return [hash_kmer(kmer) for kmer in kmers] 
     return kmers
 
-def get_kmers(seq_record , reduce, path):
+def get_kmers(seq_record, r_dict: int, path):
     """
-    Return a file with all descriptors
+    Returns a file with all descriptors
     """
     seq = seq_record.seq
-    with open("".join(path+f"result.kmr"), "a" ) as save:
+    with open("".join(path + f"result.kmr"), "a" ) as save:
         size = min(len(seq), 5)
-        if size <= 2 : gap = 0 
-        else : gap = size - 2 
-        kmers = find_kmer (sequence = seq , kmer_size = size , ngap = gap , reduce = reduce )
+        if size <= 2:
+            gap = 0
+        else:
+            gap = size - 2
+        kmers = find_kmer (sequence = seq, kmer_size = size, n_gap = gap, r_dict = r_dict)
         for kmer in kmers:
             save.write ("".join(str(kmer + '\n')))
             
@@ -175,6 +186,7 @@ def run (fastas, folder_path, name):
     print(f"[{name}] Finished running")
 
 def clean_database (db_file_name, clean_db_file_name):
+
     print (f"Cleaning {db_file_name} to keep peptides between 3 and 18")
     multi_fasta = parse_fasta_file (db_file_name)
     multi_fasta_size = []
@@ -195,10 +207,14 @@ def produce_scoring (neg_result_file_name, pos_result_file_name):
         positive = pos.readlines()
     with open (neg_temp_path + neg_result_file_name , "r") as neg :
         negative = neg.readlines()
-    
+
+    """
+    Counting the descriptors in positive and negative databases
+    """
+
     print("Starting to count the occurrences")
-    #count of descriptors in positive then in negative list
-    kmers_counter = {}
+    kmers_counter: dict[str, list[int, int, float]] = {}
+
     for kmer in positive:
         if kmer in kmers_counter.keys() : 
             kmers_counter[kmer][0] += 1
@@ -211,12 +227,12 @@ def produce_scoring (neg_result_file_name, pos_result_file_name):
             kmers_counter[kmer] = [0,1, 0]
 
     print ("Finished counting the occurrences\nStart computing scores")
-    #score attribution to each descriptor
+    # Score attribution to each descriptor
     for kmer in kmers_counter.keys():
         kmers_counter[kmer][2] = math.log((kmers_counter[kmer][0]+1)/(kmers_counter[kmer][1]+1))
 
-    print("Finished computing scores\nCreate tsv file")
-    #save data to tsv file
+    print("Finished computing scores\nCreate .tsv file")
+    # Save data to .tsv file
     with open("results/descriptors_activity_scores.tsv", "w") as save:
         unique_set_str = ""
         for kmer in kmers_counter.keys():
