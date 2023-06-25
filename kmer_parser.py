@@ -1,4 +1,6 @@
 import os
+from typing import Dict, Any, List
+
 from Bio import SeqIO
 from collections import defaultdict, Counter
 from itertools import combinations_with_replacement
@@ -14,17 +16,20 @@ from functools import partial
 import shutil
 import math
 
+'''
+Objective: reduce AA sequence complexity using physico-chemical properties
 
-# reduce AA sequence complexity using different set of in-vitro/silico properties
-# Reduction Encoding : 
-# RED1 : Hydrophobicity A= hydrophobic ; B = hydrophilic ;
-# RED2 : Physico-chemical   A= hydrophobic ; B = hydrophilic ; C = Aromatic ; D = Polar ; E = Acidic ; F = Basic ; G = Ionizable ;
-# RED3 : Solvent accessibility ; A = Low ; B = Medium ; C = High
-# RED4 : Hydrophobicity and charge; A = hydrophobic ; B = Hydrophilic : C = Charged
-# RED5 : Hydrophobicity and structure;  A = Hydrophilic ; B = Hydrophobic : C = Structural
-# RED6 : Hydrophobicity size and charge; A = Large and hydrophobic; B = small hydrophobic ; P = positive hydrophilic ; U = uncharged hydrophilic ; N = negative hydrophilic
+Reduction dictionaries encoding: 
+RED1: Hydrophobicity. A = hydrophobic; B = hydrophilic;
+RED2: Chemical properties. A = hydrophobic; B = hydrophilic; C = Aromatic; D = Polar; E = Acidic; F = Basic; G = Ionizable;
+RED3: Solvent accessibility. A = low; B = medium; C = high
+RED4: Hydrophobicity and charge. A = hydrophobic; B = hydrophilic ; C = charged
+RED5: Hydrophobicity and structure.  A = hydrophilic; B = hydrophobic; C = structural
+RED6: Hydrophobicity, size and charge. A = Large and hydrophobic; B = small and hydrophobic; P = positive hydrophilic; U = uncharged hydrophilic; N = negative hydrophilic
 
-reduction_dictionaries = {
+'''
+
+reduction_dictionaries: dict[str | Any, list[str] | Any] = {
     'A' :['A','A','B','B','B', 'B'], #Alanine
     'C' :['B','G','A','A','A', 'B'], #Cysteine
     'D' :['B','E','C','C','A', 'N'], #Aspartic acid
@@ -64,7 +69,7 @@ pos_fastas_file_name = "resources/filtered_positive_db.fasta"
 neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
 pos_temp_path = "".join(os.getcwd() + "/kmr_pos_temp/")
 
-def reduce_seq (sequence, RED_dict, r_dict = reduction_dictionaries):
+def reduce_seq (sequence, r_dict = reduce, dictionary = reduction_dictionaries):
     """ transforms sequence using AA characteristics in proteins:
     __ Args __ 
     sequence (Seq): AA sequence in single letter codification 
@@ -75,10 +80,10 @@ def reduce_seq (sequence, RED_dict, r_dict = reduction_dictionaries):
     """
     reduced_seq = ""
     for aa in sequence:
-        if aa not in r_dict.keys():
+        if aa not in dictionary.keys():
             pass
         else : 
-            reduced_seq += r_dict[aa][RED_dict - 1]
+            reduced_seq += dictionary[aa][r_dict - 1]
     return reduced_seq 
 
 def hash_kmer (kmer):
@@ -109,7 +114,7 @@ def find_kmer (sequence, kmer_size, ngap, reduce):
     """
     kmers = []
     if reduce != None :
-        sequence = reduce_seq (sequence, RED_dict = reduce)
+        sequence = reduce_seq(sequence, r_dict=reduce, dictionary=reduction_dictionaries)
     for i in range (len(sequence)):
         if i+ kmer_size <= len(sequence):
                 kmers .append (sequence[i:i+kmer_size])
