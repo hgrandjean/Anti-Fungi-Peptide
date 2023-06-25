@@ -1,19 +1,10 @@
-### import dependencies
-from kmer_parser import reduce_seq, gap_kmer, find_kmer
-import matplotlib.pyplot as plt
-import seaborn as sns 
+from kmer_parser import find_kmer
 import numpy as np
-import math 
 import random
 import sys
 from scipy.signal import find_peaks
-from Bio import SeqIO
-from Bio.SeqUtils.ProtParam import ProteinAnalysis 
+from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from Bio.SeqUtils import ProtParamData
-from Bio.SeqUtils import IsoelectricPoint  # Local
-from Bio.Seq import Seq
-from Bio.Data import IUPACData
-from Bio.SeqUtils import molecular_weight
 import pandas as pd
 
 print( '                                                                                                                                                       ' )
