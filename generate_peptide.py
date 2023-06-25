@@ -49,6 +49,8 @@ print( '                                                                        
 print( '                                                                                                                                                       ' )
 print('\n \n \n #######################################################################################################################################################')
 
+# Selected reduction dictionary
+reduce = 6
 
 def progress_bar(count, total, size = 100, sides = "[]", full = '#', empty = '.', prefix = ""):
     x = int(size * count/total)
@@ -75,7 +77,7 @@ with open(score_file, "r" ) as scores:
 print ("Finished loading scores")
 print('####################################################################################################################################################### \n \n \n')
 
-def score_kmers(pep_seq: str, r_dict = 6, score_dictionary = None):
+def score_kmers(pep_seq: str, r_dict: int, score_dictionary = None) -> float:
     """
     pep_seq: peptide sequence
     r_dict: variable precising the reduction of the amino acid dictionary (20 AA) to a specific one (see RED dictionaries in kmer_parser.py)
@@ -93,15 +95,16 @@ def score_kmers(pep_seq: str, r_dict = 6, score_dictionary = None):
     else:
         gap = size - 2
 
-    kmers = find_kmer (sequence = pep_seq, kmer_size = size, ngap = gap, reduce = r_dict)
+    kmers = find_kmer (sequence = pep_seq, kmer_size = size, n_gap= gap, r_dict = reduce)
 
     for kmer in kmers:
         if kmer in score_dictionary.keys() :
             kmer_score += score_dictionary[kmer][2]
+
     return kmer_score/len(pep_seq)
 
 ### Computation of peptide's physical properties
-def pep_physical_analysis(pep_seq: str):
+def pep_physical_analysis(pep_seq: str) -> list [str, float, float, float]:
     """
     pep_seq: peptide sequence
     """
@@ -114,9 +117,13 @@ def pep_physical_analysis(pep_seq: str):
     """
 
     hydrophobicity_profile = pa.protein_scale(ProtParamData.kd, 2, edge = 1.0)
-    peaks, _ = find_peaks (hydrophobicity_profile, distance = 2) # identify maximum minimal distance between 2 peaks
-    space = np.mean (np.diff(peaks)) #mean space between hydrophilic maximums
-    return [pep_seq , helix_propensity * 100 , charge , space]
+
+    # Identify the minimal distance between 2 peaks
+    peaks, _ = find_peaks (hydrophobicity_profile, distance = 2)
+
+    # Mean distance between hydrophilic maximums
+    periodicity = np.mean (np.diff(peaks))
+    return [pep_seq, helix_propensity * 100, charge, periodicity]
 
 
 '''
@@ -156,7 +163,7 @@ AA_order = 'ARNDCQEGHILKMFPSTWYV'
 print (f"Finished loading PAM substitution probabilities \n \n \n")
 
 # Convert the Dataframe into a dictionary
-pam2_prob_dict = {}
+pam2_prob_dict: dict = {}
 for row in pam2_prob_matrix.to_numpy():
     pam2_prob_dict[row[0]]=row[1:]
 
@@ -177,13 +184,13 @@ plt.show()
 print('####################################################################################################################################################### \n \n \n')
 n_pep = 30
 pep_seq = "RGLRRLGRKIAHGVKKYG"
-score_kmers (pep_seq, 6, score_dict)
+score_kmers (pep_seq, reduce, score_dict)
 bootstrap_iterations = 1000
-score_evolution = []
-helix_propensity_evolution = []
-charge_evolution =[]
-space_evolution = []
-peptides_generated = []
+score_evolution: list[float] = []
+helix_propensity_evolution: list[float] = []
+charge_evolution: list[float] = []
+periodicity_evolution: list[float] = []
+peptides_generated: list[str] = []
 bootstrap = range(bootstrap_iterations)
 print("Starting generation of {npep}peptides from {bootstrap_iterations} bootstrap iterations \n ")
  
@@ -197,19 +204,13 @@ for p in range(0,n_pep):
         # Replacing the amino acid selected to a knew one
         random_amino_acid = pep_seq[random_index]
         prob = pam2_prob_dict[random_amino_acid]
-        new_amino_acid = random.choices(AA_order, prob, k=1)[0]
+        new_amino_acid = random.choices(AA_order, prob, k = 1)[0]
         new_peptide = pep_seq[:random_index] + new_amino_acid + pep_seq[random_index + 1:]
     
         # Calculating scores of previous and new peptide sequences
-        peptide_score = score_kmers(pep_seq, 6, score_dict)
-        #score_evolution.append(peptide_score)
-        
-        physical_analysis = pep_physical_analysis(pep_seq)
-        #helix_proba_evol.append(physical_analysis[1])
-        #charge_evol.append(physical_analysis[2])
-        #space_evolution.append(physical_analysis[3])
-        
-        new_peptide_score = score_kmers(new_peptide,6,score_dict)
+        peptide_score = score_kmers(pep_seq, reduce, score_dict)
+        physical_analysis: list [str, float, float, float] = pep_physical_analysis(pep_seq)
+        new_peptide_score = score_kmers(new_peptide, reduce, score_dict)
     
         # The peptide is selected if the new score is higher
         score_difference = new_peptide_score - peptide_score
@@ -223,12 +224,12 @@ for p in range(0,n_pep):
         #   probability_of_acceptance = 1**(score_difference/100000)
         #    if random.random() < probability_of_acceptance:
         #        peptide = new_peptide
-        progress_bar (count = i+1, total = bootstrap_iterations, size = 100, sides = "||", full = '#',empty = ' ', prefix ="Performing bootstraps... ")
+        progress_bar (count = i + 1, total = bootstrap_iterations, size = 100, sides = "||", full = '#', empty = ' ', prefix = "Performing bootstraps... ")
     
 
     print("\nFinal peptide: \n")
     print(pep_seq)
-    print(f"final score: {score_kmers(pep_seq, 6, score_dict)}")
+    print(f"final score: {score_kmers(pep_seq, reduce, score_dict)}")
     print(f"final helix propensity: {round(physical_analysis[1], 2)} %")
     print(f"final global charge Q: {physical_analysis[2]}")
     print(f"final hydrophobicity frequency: {physical_analysis[3]}")
@@ -237,18 +238,18 @@ for p in range(0,n_pep):
     
     helix_propensity_evolution.append(physical_analysis[1])
     charge_evolution.append(physical_analysis[2])
-    space_evolution.append(physical_analysis[3])
+    periodicity_evolution.append(physical_analysis[3])
     peptides_generated.append(pep_seq)
 
 print(score_evolution)
-final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, space_evolution)), columns =["peptide_sequence", "score" , "charge" , "hydro_frequency"])
+final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution)), columns = ["Peptide sequence", "Activity score" , "Net charge" , "Hydrophobicity-based periodicity"])
 print(final_df)
 final_df.to_excel('results/de_novo_peptide_library.xlsx')
 
-#plt.plot(bootstrap, score_evolution ,label = "score")
-#plt.plot(bootstrap, helix_proba_evol ,label = "helix probability")
-#plt.plot(bootstrap, charge_evol ,label = "charge") 
-#plt.plot(bootstrap, space_evolution ,label = "hydrophobicity space") 
+#plt.plot(bootstrap, score_evolution, label = "Score")
+#plt.plot(bootstrap, helix_propensity_evolution, label = "Helix propensity")
+#plt.plot(bootstrap, charge_evolution, label = "Net charge")
+#plt.plot(bootstrap, periodicity_evolution, label = "Hydrophobicity-based periodicity")
 #plt.legend()
 #plt.show() 
 '''
