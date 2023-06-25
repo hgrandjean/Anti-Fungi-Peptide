@@ -7,6 +7,10 @@ from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from Bio.SeqUtils import ProtParamData
 import pandas as pd
 
+'''
+Loading interface
+'''
+
 print( '                                                                                                                                                       ' )
 print( '                                                                                                                                                       ' )
 print( '                                                                                                                    ==========----                     ' )
@@ -52,29 +56,13 @@ def progress_bar(count,total,size=100,sides="[]",full='#',empty='.',prefix=""):
     if count==total:
         sys.stdout.write("\n")
 
-### scoring each descriptor found in the given peptide using score previously computed ###
-### uses find_kmer function from kmer_parser ###
-def score_kmers(pep_seq , reduce, score_dict ):
-      '''
-      pep_seq : str of peptide sequence
-      reduce : bool precise reduction of the amino acid dictionnary (20 AA) to 
-                a specific one (see REDdictionnaries) 
-      score_dict : dict loadded scores and kmer sequences 
-      '''
-      kmer_score = 0
-      size = min(len(pep_seq), 5)
-      if size <= 2 : gap = 0 
-      else : gap = size - 2 
-      kmers = find_kmer (sequence = pep_seq , kmer_size = size , ngap = gap , reduce = reduce )
-      for kmer in kmers:
-          if kmer in score_dict.keys() : 
-              kmer_score += score_dict[kmer][2]
-              # print(kmer," ", score_dict[kmer][2])
-      return kmer_score/len(pep_seq)
-    
-    
+'''
+Scoring of each descriptor found in the given peptide using previously computed scores. 
+Uses find_kmer function from kmer_parser
+'''
+
+# Loading score from computed .tsv file
 score_file = 'results/descriptors_activity_scores.tsv'
-### loading score from computed tsv file ###
 
 print (f"Loading descriptors scores from file : {score_file}")
 score_dict = {}
@@ -87,18 +75,48 @@ with open(score_file, "r" ) as scores :
 print ("Finished loading scores")
 print('####################################################################################################################################################### \n \n \n')
 
-### computation of peptide physical properties ###
-def pep_physical_analysis(peptide): 
-    pa = ProteinAnalysis(str(peptide))   
-    helix_prob = pa.secondary_structure_fraction()[0]
-    charge =pa.charge_at_pH(7)
+def score_kmers(pep_seq: str, r_dict = 6, score_dictionary = None):
+    """
+    pep_seq: peptide sequence
+    r_dict: variable precising the reduction of the amino acid dictionary (20 AA) to a specific one (see RED dictionaries in kmer_parser.py)
+    score_dictionary: dictionary with scores and kmer sequences
+    """
+
+    if score_dictionary is None:
+        score_dictionary = score_dict
+
+    kmer_score = 0
+    size = min(len(pep_seq), 5)
+
+    if size <= 2:
+        gap = 0
+    else:
+        gap = size - 2
+
+    kmers = find_kmer (sequence = pep_seq, kmer_size = size, ngap = gap, reduce = r_dict)
+
+    for kmer in kmers:
+        if kmer in score_dictionary.keys() :
+            kmer_score += score_dictionary[kmer][2]
+    return kmer_score/len(pep_seq)
+
+### Computation of peptide's physical properties
+def pep_physical_analysis(pep_seq: str):
+    """
+    pep_seq: peptide sequence
+    """
+    pa = ProteinAnalysis(pep_seq)
+    helix_propensity = pa.secondary_structure_fraction()[0]
+    charge = pa.charge_at_pH(7)
     
-    # get location of hydrophoilic residues 
-    hydropho = pa.protein_scale(ProtParamData.kd, 2, edge=1.0) #hydrophobicity using a step of one kd = Kyle Doolittle score
-    size = len(hydropho)
-    peaks, _ = find_peaks(hydropho, distance=2) # identify maximums miniaml distance between two peaks = 2
-    space = np.mean(np.diff(peaks)) #mean space between hydrophilic maximums 
-    return [peptide , helix_prob*100 , charge , space ]
+    """
+    Kyte-Doolitle hydrophobicity profile
+    """
+
+    hydrophobicity_profile = pa.protein_scale(ProtParamData.kd, 2, edge = 1.0)
+    peaks, _ = find_peaks (hydrophobicity_profile, distance = 2) # identify maximum minimal distance between 2 peaks
+    space = np.mean (np.diff(peaks)) #mean space between hydrophilic maximums
+    return [pep_seq , helix_propensity * 100 , charge , space]
 
 
 '''
@@ -128,8 +146,11 @@ print(data)
 data.to_excel("computed_db.xlsx")
 '''
 
-#import substitution probabilities from PAM2 data frame relative to mutation frequencies with conservation excluded
-pam2_prob_matrix=pd.read_excel('resources/PAM_2_substitution_probabilities_formated.xlsx')
+'''
+Import substitution probabilities from PAM2 Dataframe relative to mutation frequencies with conservation excluded
+'''
+
+pam2_prob_matrix = pd.read_excel('resources/PAM_2_substitution_probabilities_formated.xlsx')
 print (f"Loading PAM substitution probabilities")
 aa_order='ARNDCQEGHILKMFPSTWYV'
 print (f"Finished loading PAM substitution probabilities \n \n \n")
