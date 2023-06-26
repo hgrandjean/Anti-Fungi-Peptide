@@ -55,7 +55,7 @@ It was then filtered to select peptides with the length from 3 to 18 amino acids
 
 ### Negative Database 
 
-The database used to identify positive AMPs' descriptors, ```filtered_negative_db.fasta```, was exported from [UniProt](https://www.uniprot.org/) by selecting the intracellular peptides, since it was assumed that they would not be capable of transmembrane transport. 
+The database used to identify negative AMPs' descriptors, ```filtered_negative_db.fasta```, was exported from [UniProt](https://www.uniprot.org/) by selecting the intracellular peptides, since it was assumed that they would not be capable of transmembrane transport. 
 
 Selected peptides were subsequently filtered by their length, to keep only short candidates of the length between 3 and 18 AA.
 
