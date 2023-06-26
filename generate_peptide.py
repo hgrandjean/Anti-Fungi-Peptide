@@ -136,6 +136,8 @@ AA_ORDER = "ARNDCQEGHILKMFPSTWYV"
 DEFAULT_PEPTIDE = "RGLRRLGRKIAHGVKKYG"
 NB_PEPTIDE = 50
 NB_ITERATIONS = 1000
+# Selected reduction dictionary
+REDUCE = 6
 
 
 def default_progress():
@@ -151,7 +153,7 @@ def default_progress():
 
 ### scoring each descriptor found in the given peptide using score previously computed ###
 ### uses find_kmer function from kmer_parser ###
-def score_kmers(pep_seq, reduce, score_dict):
+def score_kmers(pep_seq, reduce, score_dict) -> float:
     """
     pep_seq : str of peptide sequence
     reduce : bool precise reduction of the amino acid dictionnary (20 AA) to
@@ -184,7 +186,7 @@ def load_descriptors_score(score_file: str = SCORE_FILE) -> dict:
 
 
 ### computation of peptide physical properties ###
-def pep_physical_analysis(peptide):
+def pep_physical_analysis(peptide) -> list[str, float, float, float]:
     pa = ProteinAnalysis(str(peptide))
     helix_prob = pa.secondary_structure_fraction()[0]
     charge = pa.charge_at_pH(7)
@@ -194,8 +196,12 @@ def pep_physical_analysis(peptide):
         ProtParamData.kd, 2, edge=1.0
     )  # hydrophobicity using a step of one kd = Kyle Doolittle score
     size = len(hydropho)
-    peaks, _ = find_peaks(hydropho, distance=2)  # identify maximums miniaml distance between two peaks = 2
-    space = np.mean(np.diff(peaks))  # mean space between hydrophilic maximums
+
+    # Identify the minimal distance between 2 peaks
+    peaks, _ = find_peaks(hydropho, distance=2)
+
+    # Mean distance between hydrophilic maximums
+    space = np.mean(np.diff(peaks))
     return [peptide, helix_prob * 100, charge, space]
 
 
@@ -203,7 +209,7 @@ def generate_prob_dict_from_excel(file_name: str = PAM2_EXCEL_FILE) -> dict:
     pam2_prob_matrix = pd.read_excel(file_name)
 
     # Convert the DataFrame to a dictionary
-    pam2_prob_dict = {}
+    pam2_prob_dict: dict = {}
     for row in pam2_prob_matrix.to_numpy():
         pam2_prob_dict[row[0]] = row[1:]
     return pam2_prob_dict
@@ -235,15 +241,15 @@ def generate_peptides(
                 new_peptide = peptide[:random_index] + new_amino_acid + peptide[random_index + 1 :]
 
                 # Calculating scores of previous and new peptides sequences
-                peptide_score = score_kmers(peptide, 6, score_dict)
+                peptide_score = score_kmers(peptide, REDUCE, score_dict)
                 # score_evolution.append(peptide_score)
 
-                physical_analysis = pep_physical_analysis(peptide)
+                physical_analysis: list[str, float, float, float] = pep_physical_analysis(peptide)
                 # helix_proba_evol.append(physical_analysis[1])
                 # charge_evol.append(physical_analysis[2])
                 # space_evolution.append(physical_analysis[3])
 
-                new_peptide_score = score_kmers(new_peptide, 6, score_dict)
+                new_peptide_score = score_kmers(new_peptide, REDUCE, score_dict)
 
                 # The peptide is selected if new score is higher
                 score_difference = new_peptide_score - peptide_score
