@@ -298,6 +298,7 @@ def generate_peptides(
     )
     rich_print(Align(Panel("Generated peptides and their respectives properties", style="light_slate_blue", expand=False), align="center"))
     print(final_df)
+    final_df.to_excel("results/de_novo_peptide_library.xlsx")
 
 
 if __name__ == "__main__":
