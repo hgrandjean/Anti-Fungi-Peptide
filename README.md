@@ -114,5 +114,9 @@ def pep_physical_analysis (pep_seq: str) -> list [str, float, float, float]
 - Distances between hydrophilic domains 
 - Helical distribution of AA: _alpha-helices are most preferable_
 
-<img src="results/filtered_positive_db_aa_distribution.png" width="300"  >
+![img.png](results/Hydrophobicity and helical wheel analysis of databases.png)
+
+**A** and **B** line charts represent auto-correlation of peptide hydrophobicity profiles (Eisenberg consensus scale using Biopython `Protparam` library) in positive and negative databases, respectively. 
+
+Panels **C** and **D** represent amino acids distribution along the helical wheels in positive and negative examples, respectively. _Color code: gray = hydrophobic; yellow = polar; blue = basic; red = acidic._ Generated with `helixviz` library. 
 
