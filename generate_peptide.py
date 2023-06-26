@@ -247,7 +247,7 @@ def generate_peptides(
 
                 # The peptide is selected if new score is higher
                 score_difference = new_peptide_score - peptide_score
-                #print(f"current score: {peptide_score} ; new score: {new_peptide_score}")
+                # print(f"current score: {peptide_score} ; new score: {new_peptide_score}")
 
                 if new_peptide_score - peptide_score > 0:
                     peptide = new_peptide
@@ -262,21 +262,21 @@ def generate_peptides(
                 # progress bar HERE
                 progress.update(task_id, advance=1)
 
-        '''
+        """
         rich_print("\nFinal peptide : \n")
         rich_print(peptide)
         rich_print(f"final score : {score_kmers(peptide,6,score_dict)}")
         rich_print(f"final helix probability : {round(physical_analysis[1], 2)} %")
         rich_print(f"final global charge Q : {physical_analysis[2]}")
         rich_print(f"final hydrophobicity frequency : {physical_analysis[3]}")
-        '''
+        """
 
         table = Table(
             title=f"[i]Result of peptide[/] [b royal_blue1]{peptide}",
             show_header=False,
             box=box.ROUNDED,
             style="cyan",
-            title_style=""
+            title_style="",
         )
         table.add_row("Final score", f"{score_kmers(peptide,6,score_dict)}")
         table.add_row("Final helix probability", f"{round(physical_analysis[1], 2)}%")
@@ -285,18 +285,22 @@ def generate_peptides(
 
         rich_print("\n", table, "\n")
 
-
         score_evolution.append(new_peptide_score)
         helix_proba_evol.append(physical_analysis[1])
         charge_evol.append(physical_analysis[2])
         space_evolution.append(physical_analysis[3])
         peptides_generated.append(peptide)
-    #print(score_evolution)
+    # print(score_evolution)
     final_df = pd.DataFrame(
         list(zip(peptides_generated, score_evolution, charge_evol, space_evolution)),
         columns=["peptide_sequence", "score", "charge", "hydro_frequency"],
     )
-    rich_print(Align(Panel("Generated peptides and their respectives properties", style="light_slate_blue", expand=False), align="center"))
+    rich_print(
+        Align(
+            Panel("Generated peptides and their respectives properties", style="light_slate_blue", expand=False),
+            align="center",
+        )
+    )
     print(final_df)
     final_df.to_excel("results/de_novo_peptide_library.xlsx")
 

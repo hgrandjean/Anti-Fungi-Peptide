@@ -3,7 +3,7 @@ from math import pi
 from rich.console import Console
 from rich.table import Table
 
-console = Console(color_system='windows')
+console = Console(color_system="windows")
 
 
 def phi_psi(pdb_file, return_ignored=False):
@@ -31,9 +31,9 @@ def phi_psi(pdb_file, return_ignored=False):
         phi_psi_data, ignored_res, x, y = get_ignored_res(file=fp)
 
         if return_ignored:
-            table = Table(title='Ignored residues')
-            table.add_column('Aminoacid\nresidue', style='red')
-            table.add_column('\u03C6-\u03C8\nangles', justify='center')
+            table = Table(title="Ignored residues")
+            table.add_column("Aminoacid\nresidue", style="red")
+            table.add_column("\u03C6-\u03C8\nangles", justify="center")
             for _ in ignored_res:
                 table.add_row(_[0], str(_[1]))
             console.print(table)
