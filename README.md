@@ -15,9 +15,9 @@ Synthetic AMPs, strengthened by sequence truncation, mutation, cyclization, or i
 This project aims at developing an algorithm for the de novo design of synthetic AMPs with optimized activity, as compared to those present in living organisms. Our ultimate goal would be to validate the **nanomolar range activity** of the generated sequences against fungal pathogens, by contrast with the micromolar range of natural AMPs. 
 
 ## Installation
-### Setup on Windows
+### Setup using venv
 
-The following code block allows to setup a [virtual environment](https://docs.python.org/3/library/venv.html) on Windows OS.
+The following code block allows to setup a [virtual environment](https://docs.python.org/3/library/venv.html).
 
 ### Dependency management using ```poetry```
 
