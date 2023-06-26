@@ -73,7 +73,7 @@ The database of AMPs IC50 ```AMPs_DB_IC50.xslx``` was exported from:
 
 1. Cures positive and negative databases using a size restriction filter. Only AMPs of the length between **3 and 18 AA** are selected, due to their enhanced antimicrobial activity, confirmed in the literature.
 
-> The **k-mer approach** is a method commonly used in the analysis of protein sequences. It involves breaking down a sequence into shorter subsequences of length _k_, known as _**k-mers**_, and examining the occurrence and properties of these k-mers within the sequence.
+> The **k-mer approach** is a method commonly used in the analysis of protein sequences. It involves breaking down a sequence into shorter subsequences of length _k_, known as _**k-mers**_, and examining the occurrence and properties of these k-mers within the sequence. A k=5 size was selected for generation of k-mer descrirptors because it enabled the integration of all statbilization interaction found in helixes (i+3;i+4;i+5) without being too large for interpretation.
 
 2. Creates a temporary directory containing ```.kmr``` files for each peptide sequence with all possible **k-mers** of **size 5 and a maximum of 3 gaps**. 
 All generated k-mers are then concatenated to be ranged in accordance to their **activity scores**.
