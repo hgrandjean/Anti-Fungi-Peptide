@@ -308,7 +308,7 @@ if __name__ == "__main__":
     pam2_probs = generate_prob_dict_from_excel()
 
     ### generation and optimisation of a peptide sequence
-    generate_peptides(pam2_probs, bootstrap=2)
+    generate_peptides(pam2_probs)
 
 
 """
