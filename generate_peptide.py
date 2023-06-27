@@ -207,7 +207,7 @@ for p in range(0,n_pep):
         # Replacing the amino acid selected to a knew one
         random_amino_acid = pep_seq[random_index]
         prob = pam2_prob_dict[random_amino_acid]
-        new_amino_acid = random.choices(AA_order, prob, k = 1)[0]
+        new_amino_acid = random.choices(AA_order)[0] #new_amino_acid = random.choices(AA_order, prob, k = 1)[0]
         new_peptide = pep_seq[:random_index] + new_amino_acid + pep_seq[random_index + 1:]
     
         # Calculating scores of previous and new peptide sequences
