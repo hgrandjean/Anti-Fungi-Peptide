@@ -266,8 +266,6 @@ ax.set_zlabel("helix_prob")
 plt.show()
 """
 
-<<<<<<< HEAD
-=======
 """
 Generation and optimisation of a peptide sequence
 """
@@ -364,7 +362,6 @@ if __name__ == "__main__":
     generate_peptides(pam2_probs)
 
 
->>>>>>> be8c541 (refacto: change variable names and reformating)
 # plt.plot(bootstrap, score_evolution ,label = "score")
 # plt.plot(bootstrap, helix_proba_evol ,label = "helix probability")
 # plt.plot(bootstrap, charge_evol ,label = "charge")
