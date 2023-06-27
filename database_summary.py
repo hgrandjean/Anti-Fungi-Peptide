@@ -4,8 +4,19 @@ from Bio import SeqIO
 from collections import defaultdict, Counter
 
 #Define the color properties and databases
-properties_aa = [["D", "E", "K", "N"], ["H", "F", "Y", "W"], ["A", "V", "L", "I", "G"]]
-color_aa = ["red", "blue", "green"]
+properties_aa = [["D", "E"], ["K", "R", "H"], ["N", "Q", "S","T", "Y"], ["F", "C", "W", "A", "V", "L", "I", "G", "M"], ["P"]]
+color_aa = ["grey", "blue", "green", "orange", "red"]
+
+'''
+The categories of the AA are set in accordance with the used reduction dictionary, with the exception of P, which is considered as a unique AA
+
+Grey: hydrophilic, negatively charged
+Blue: hydrophilic, positively charged
+Green: hydrophilic, uncharged
+Orange: hydrophobic
+Red: proline 
+'''
+
 pos_db_name = "resources/filtered_positive_db.fasta"
 neg_db_name = "resources/filtered_negative_db.fasta"
 
