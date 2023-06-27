@@ -146,4 +146,8 @@ The ultimate goal of using SVC is to eliminate peptides of potentially low antim
 
 Here, SVC is used to create a distinction within a training dataset between more than 2 variates, with the estimation of the false positive and false negative classification confidence. As a result, a bivariate density plot is obtained after over 1000 cycles of the SVC repetition. 
 
+### `distribution_plot.py`
 
+Plots the distribution of activity scores for the AMPs from filtered positive database (`filtered_positive_db.fasta`) and a generated set of candidates (`de_novo_peptide_library.xslx`).
+
+![distribution_subplots.png](results%2Fdistribution_subplots.png)
