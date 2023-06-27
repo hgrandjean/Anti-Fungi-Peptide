@@ -100,7 +100,7 @@ The score is added to each key: the couple of the dictionary value and the accor
 
 Analyses the frequencies of AA at given positions in positive and negative databases.
 
-![img.png](results/AA frequencies.png)
+![img.png](results/AA%20frequencies.png)
 
 ### ```generate_peptide.py```
 
