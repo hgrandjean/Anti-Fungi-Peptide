@@ -34,15 +34,15 @@ AMPs_DB = pd.read_excel('resources/AMPs_DB_IC50.xlsx')
 
 
 scores= []
-for seq in AMPs_DB["Sequence"]:
+for seq in AMPs_DB["sequence"]:
   scores.append(score_kmers(seq, r_dict=reduce ,score_dictionary = score_dict))
 
 AMPs_DB["score"]=scores
-AMPs_DB['log_IC50'] = np.log10(AMPs_DB['Rel IC50'])
+AMPs_DB['log_IC50'] = np.log10(AMPs_DB['rel_IC50'])
 AMPs_DB = AMPs_DB[AMPs_DB['select']==1]
 
 
-train_x = AMPs_DB[['score','hydrophobic fraction']] #'hydrophobic fraction'
+train_x = AMPs_DB[['score','hydrophobic_fraction']] #'hydrophobic fraction'
 train_y = AMPs_DB['log_IC50']
 
 regr = linear_model.LinearRegression()
@@ -67,8 +67,8 @@ print(print_model)
 fig=plt.figure()
 ax=fig.add_subplot(111,projection='3d')
 n=100
-ax.scatter(AMPs_DB["score"],AMPs_DB["hydrophobic moment"],AMPs_DB["log_IC50"],color="red")
-ax.set_xlabel("score")
-ax.set_ylabel("hydrophobic moment")
-ax.set_zlabel("log_IC50")
+ax.scatter(AMPs_DB["score"],AMPs_DB["hydrophobic_moment"],AMPs_DB["log_IC50"],color="red")
+ax.set_xlabel("Score")
+ax.set_ylabel("Hydrophobic moment")
+ax.set_zlabel("log(IC50)")
 plt.show() 
