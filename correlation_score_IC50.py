@@ -1,12 +1,6 @@
-from kmer_parser import find_kmer
+from generate_peptide import score_kmers
 import numpy as np
-import random
-import sys
-from scipy.signal import find_peaks
-from Bio.SeqUtils.ProtParam import ProteinAnalysis
-from Bio.SeqUtils import ProtParamData
 import pandas as pd
-import seaborn as sns 
 import matplotlib.pyplot as plt 
 from sklearn import linear_model
 import statsmodels.api as sm
