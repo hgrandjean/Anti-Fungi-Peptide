@@ -1,3 +1,4 @@
+# import all required libraries 
 from kmer_parser import find_kmer
 import numpy as np
 import random
@@ -19,7 +20,6 @@ from sklearn.metrics import classification_report, confusion_matrix
 # Selected reduction dictionary
 reduce = 6
 
-
 '''
 Scoring of each descriptor found in the given peptide using previously computed scores. 
 Uses find_kmer function from kmer_parser
@@ -40,6 +40,7 @@ print ("Finished loading scores")
 
 print('####################################################################################################################################################### \n \n \n')
 
+# local descriptor scorinf function 
 def score_kmers(pep_seq: str, r_dict: int, score_dictionary = None) -> float:
     """
     pep_seq: peptide sequence
@@ -66,14 +67,20 @@ def score_kmers(pep_seq: str, r_dict: int, score_dictionary = None) -> float:
 
     return kmer_score/len(pep_seq)
 
+# global descriptor scoring function 
 def pep_physical_analysis(pep_seq: str) -> list [str, float, float, float]:
     """
+    Physical analysis of peptide sequence based on residues compositions 
+    arg 
     pep_seq: peptide sequence
+    return 
+    hydrophobicity: gravy (GRand AVerage of hYdrophaty) for complete peptide*
+    Alternative return : hydrophobicity_scale of the peptide with scale of 2 
     """
     pa = ProteinAnalysis(pep_seq)
     
     """
-    Kyte-Doolitle hydrophobicity profile
+    Kyte-Doolitle hydrophobicity profile grand average 
     """
     hydrophobicity = pa.gravy()
     hydrophobicity_scale = pa.protein_scale(ProtParamData.kd, 2, edge = 1.0)
@@ -88,8 +95,13 @@ def calculate_moment(array, angle=100):
     uH = sqrt(sum(Hi cos(i*d))**2 + sum(Hi sin(i*d))**2),
     where i is the amino acid index and d (delta) is an angular value in
     degrees (100 for alpha-helix, 180 for beta-sheet).
-
+    
     Extracted from: https://github.com/JoaoRodrigues/hydrophobic_moment/blob/main/hydrophobic_moment.py
+
+    arg
+    array:  is a scale of hydrophobicity for peptide sequence 
+    return 
+    hydrophobic:  average moment based on the Eisenberg formula 
     """
 
     sum_cos, sum_sin = 0.0, 0.0
@@ -101,9 +113,9 @@ def calculate_moment(array, angle=100):
 
     return math.sqrt(sum_cos**2 + sum_sin**2)/len(array)
 
-
+#import database of IC50 published in Fjell, C. D. et al. Identification of Novel Antibacterial Peptides by Chemoinformatics and Machine Learning. J. Med. Chem. 52, 2006–2015 (2009).
 AMPs_DB = pd.read_excel('resources/AMPs_DB_IC50.xlsx')
-
+# compute scores and hydrophobicity for all peptides and add them to the dataframe 
 scores= []
 hydrophobicity_profile = []
 for seq in AMPs_DB["sequence"]:
@@ -111,54 +123,54 @@ for seq in AMPs_DB["sequence"]:
   hydrophobicity_profile.append(pep_physical_analysis(seq))
   # hydrophobicity_profile.append(calculate_moment(pep_physical_analysis(seq)))
 
-print(hydrophobicity_profile)
-
 AMPs_DB["score"]=scores
 AMPs_DB['log_IC50'] = np.log10(AMPs_DB['rel_IC50'])
 AMPs_DB["hydrophobicity_profile"]= hydrophobicity_profile
 
-print(AMPs_DB)
 
+# perform multiple iteration of the SVC to see false and true positive discovery 
 pred_score_0=[]
 pred_score_1=[]
 for i in range(0,100):
-  #split and prepare dataset
+  #split and prepare dataset for train and test in a specified ratio
+  # train datset  
   train = AMPs_DB.sample(frac = 0.75)
   x_train_data= train[['score','hydrophobicity_profile','a3v_Sequence_Average']]
   y_train_data=train['select']
   x_train_col_list =  x_train_data.values.tolist()
   y_train_col_list =  y_train_data.values.tolist()
   
-  
+  # test dataset 
   test = AMPs_DB.drop(train.index)
   x_test_data= test[['score','hydrophobicity_profile','a3v_Sequence_Average']]
   y_test_data=test['select']
   x_test_col_list =  x_test_data.values.tolist()
   y_test_col_list =  y_test_data.values.tolist()
   
-  
-  
+  #model creation and training 
   classifier = SVC(kernel='linear', random_state = 0) #kernel = 'linear' ; 'poly'; 'rbf' or gamma = 'auto'
   classifier.fit(x_train_col_list, y_train_col_list)
   #Prediction sur le Test set
   y_pred = classifier.predict(x_test_col_list)
   
-  
+  # model evaluation based on test dataset 
   cm = confusion_matrix(y_test_col_list,y_pred)
   sns.heatmap(cm, annot=True, fmt='d').set_title('Confusion matrix of linear SVM')
   #print(classification_report(y_test_col_list, y_pred, output_dict=True)['0']['precision'])
   pred_score_0.append(classification_report(y_test_col_list, y_pred, output_dict=True)['0']['precision']*100)
   pred_score_1.append(classification_report(y_test_col_list, y_pred, output_dict=True)['1']['precision']*100)  
-  '''
   
-  regr = SVR()
+    '''
+    #Linear regression model based on SVM 
+   regr = SVR()
   regr.fit(x_train_col_list, y_train_col_list)
   y_pred= regr.predict(x_test_col_list)
   
   plt.scatter(y_test_col_list, y_pred)
   '''
   
-  plt.show()
+  #plt.show()
+# plot result of all performed itteration and confidence value for true and false positive discovery 
 df={
   "pred_score_0" : pred_score_0,
   "pred_score_1" : pred_score_1
