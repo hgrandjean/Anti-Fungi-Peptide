@@ -52,8 +52,8 @@ reduction_dictionaries: dict[str, list[str]] = {
 reduce = 6
 
 # Database to be cleaned
-dirty_neg_file_name = "uniprot_neg_db.fasta"
-dirty_pos_file_name = "full_positive_db.fasta"
+#dirty_neg_file_name = "uniprot_neg_db.fasta"
+dirty_pos_file_name = "resources/full_positive_db.fasta"
 
 # Clean database containing peptides between 3 and 18 AA
 neg_fastas_file_name = "resources/filtered_negative_db.fasta"
