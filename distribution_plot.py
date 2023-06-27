@@ -31,16 +31,20 @@ for fasta in multi_fasta:
     seq_db = fasta.seq
     scores_DB.append(score_kmers(seq_db, r_dict = REDUCE, score_dict = score_dictionary))
 
-sns.histplot(scores, bins = 20, kde = True).set(title = "Distribution of peptide scores from positive DB", xlabel = "Scores", ylabel = "Count")
-plt.ylim(0, 1)
-plt.xlim(-5, 25)
+'''
+2 separate plots for each database
 
-plt.show()
+sns.histplot(scores_DB, bins = 20, kde = True).set(title ="Distribution of peptide scores from positive DB", xlabel ="Scores", ylabel ="Count")
+sns.histplot(PEPTIDES["Activity score"], bins = 20, kde = True).set(title="Distribution of generated peptides scores", xlabel="Scores", ylabel="Count")
+'''
 
-scores = peptides["Activity score"]
+'''
+The plots for the peptides of a positive database and generated set in a single frame
+'''
 
-sns.histplot(scores, bins = 20, kde = True).set(title="Distribution of generated peptides scores", xlabel="Scores", ylabel="Count")
-plt.ylim(0, 1)
-plt.xlim(-5, 25)
+fig, ax = plt.subplots()
+for a in [scores_DB, PEPTIDES["Activity score"]]:
+    sns.histplot(a, bins = 20, ax = ax, kde = True).set(title="Distribution of scores", xlabel="Scores", ylabel="Count")
 
+plt.legend(labels = ['Positive database', 'Generated peptides'])
 plt.show()
