@@ -35,7 +35,7 @@ scores = []
 multi_fasta = parse_fasta_file ("resources/filtered_positive_db.fasta")
 for fasta in multi_fasta:
     seq_db = fasta.seq
-    scores.append(score_kmers(seq_db, r_dict = reduce, score_dictionary = score_dict))
+    scores.append(score_kmers(seq_db, reduce = reduce, score_dictionary = score_dict))
 
 sns.distplot(scores, bins = 20).set(title = "Distribution of peptide scores from positive DB", xlabel = "Scores", ylabel = "Count")
 plt.ylim(0, 1)
@@ -47,7 +47,7 @@ scores = []
 
 # For Excel files
 for seq in peptides["Peptide sequence"]:
-    scores.append(score_kmers(seq, r_dict=reduce ,score_dictionary = score_dict))
+    scores.append(score_kmers(seq, reduce=reduce ,score_dictionary = score_dict))
 
 # Peptides["Activity score"] = scores
 
