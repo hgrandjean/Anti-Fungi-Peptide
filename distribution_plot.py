@@ -1,10 +1,5 @@
-from kmer_parser import find_kmer
-import numpy as np
-import random
-import sys
-from scipy.signal import find_peaks
-from Bio.SeqUtils.ProtParam import ProteinAnalysis
-from Bio.SeqUtils import ProtParamData
+from kmer_parser import find_kmer, parse_fasta_file
+from generate_peptide import score_kmers
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -19,10 +14,6 @@ reduce = 6
 Scoring of each descriptor found in the given peptide using previously computed scores. 
 Uses find_kmer function from kmer_parser
 '''
-def parse_fasta_file (file_name):
-    multi_fasta = [record for record in SeqIO.parse(file_name, "fasta")]
-    print(f"Ended parsing of {file_name}")
-    return multi_fasta
 
 # Loading score from computed .tsv file
 score_file = 'results/descriptors_activity_scores.tsv'
@@ -38,49 +29,30 @@ with open(score_file, "r" ) as scores:
 print ("Finished loading scores")
 print('####################################################################################################################################################### \n \n \n')
 
-def score_kmers(pep_seq: str, r_dict: int, score_dictionary = None) -> float:
-    """
-    pep_seq: peptide sequence
-    r_dict: variable precising the reduction of the amino acid dictionary (20 AA) to a specific one (see RED dictionaries in kmer_parser.py)
-    score_dictionary: dictionary with scores and kmer sequences
-    """
+scores = []
 
-    if score_dictionary is None:
-        score_dictionary = score_dict
-
-    kmer_score = 0
-    size = min(len(pep_seq), 5)
-
-    if size <= 2:
-        gap = 0
-    else:
-        gap = size - 2
-
-    kmers = find_kmer (sequence = pep_seq, kmer_size = size, n_gap= gap, r_dict = reduce)
-
-    for kmer in kmers:
-        if kmer in score_dictionary.keys() :
-            kmer_score += score_dictionary[kmer][2]
-
-    return kmer_score/len(pep_seq)
-
-scores= []
-'''
-#for fasta files
-multi_fasta = parse_fasta_file (file_name)
+# For .fasta files:
+multi_fasta = parse_fasta_file ("resources/filtered_positive_db.fasta")
 for fasta in multi_fasta:
-    seq = fasta.seq
-'''
+    seq_db = fasta.seq
+    scores.append(score_kmers(seq_db, r_dict = reduce, score_dictionary = score_dict))
 
-for seq in peptides["Peptide sequence"]: #for excel files
+sns.distplot(scores, bins = 20).set(title = "Distribution of peptide scores from positive DB", xlabel = "Scores", ylabel = "Count")
+plt.ylim(0, 1)
+plt.xlim(-5, 25)
+
+plt.show()
+
+scores = []
+
+# For Excel files
+for seq in peptides["Peptide sequence"]:
     scores.append(score_kmers(seq, r_dict=reduce ,score_dictionary = score_dict))
 
-#peptides["Activity score"]=scores
+# Peptides["Activity score"] = scores
 
-sns.distplot(scores, bins=20).set(title="Distribution of generated peptides scores", xlabel="Scores", ylabel="Count")
+sns.distplot(scores, bins = 20).set(title="Distribution of generated peptides scores", xlabel="Scores", ylabel="Count")
+plt.ylim(0, 1)
+plt.xlim(-5, 25)
 
-'''
-plt.hist(scores, bins=1)
-plt.plot(scores)
-'''
 plt.show()
