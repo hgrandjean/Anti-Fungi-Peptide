@@ -29,32 +29,6 @@ print ("Finished loading scores")
 
 print('####################################################################################################################################################### \n \n \n')
 
-def score_kmers(pep_seq: str, r_dict: int, score_dictionary = None) -> float:
-    """
-    pep_seq: peptide sequence
-    r_dict: variable precising the reduction of the amino acid dictionary (20 AA) to a specific one (see RED dictionaries in kmer_parser.py)
-    score_dictionary: dictionary with scores and kmer sequences
-    """
-
-    if score_dictionary is None:
-        score_dictionary = score_dict
-
-    kmer_score = 0
-    size = min(len(pep_seq), 5)
-
-    if size <= 2:
-        gap = 0
-    else:
-        gap = size - 2
-
-    kmers = find_kmer (pep_seq,size, gap , reduce) #find_kmer (sequence, kmer_size, ngap, reduce):
-
-    for kmer in kmers:
-        if kmer in score_dictionary.keys() :
-            kmer_score += score_dictionary[kmer][2]
-
-    return kmer_score/len(pep_seq)
-
 
 AMPs_DB = pd.read_excel('resources/AMPs_DB_IC50.xlsx')
 
