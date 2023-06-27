@@ -1,4 +1,4 @@
-from kmer_parser import find_kmer, parse_fasta_file
+from kmer_parser import parse_fasta_file
 from generate_peptide import score_kmers
 import pandas as pd
 import seaborn as sns
@@ -32,26 +32,20 @@ print('#########################################################################
 scores = []
 
 # For .fasta files:
-multi_fasta = parse_fasta_file ("resources/filtered_positive_db.fasta")
+multi_fasta = parse_fasta_file (file_name)
 for fasta in multi_fasta:
     seq_db = fasta.seq
-    scores.append(score_kmers(seq_db, reduce = reduce, score_dictionary = score_dict))
+    scores.append(score_kmers(seq_db, r_dict = reduce, score_dictionary = score_dict))
 
-sns.distplot(scores, bins = 20).set(title = "Distribution of peptide scores from positive DB", xlabel = "Scores", ylabel = "Count")
+sns.histplot(scores, bins = 20, kde = True).set(title = "Distribution of peptide scores from positive DB", xlabel = "Scores", ylabel = "Count")
 plt.ylim(0, 1)
 plt.xlim(-5, 25)
 
 plt.show()
 
-scores = []
+scores = peptides["Activity score"]
 
-# For Excel files
-for seq in peptides["Peptide sequence"]:
-    scores.append(score_kmers(seq, reduce=reduce ,score_dictionary = score_dict))
-
-# Peptides["Activity score"] = scores
-
-sns.distplot(scores, bins = 20).set(title="Distribution of generated peptides scores", xlabel="Scores", ylabel="Count")
+sns.histplot(scores, bins = 20, kde = True).set(title="Distribution of generated peptides scores", xlabel="Scores", ylabel="Count")
 plt.ylim(0, 1)
 plt.xlim(-5, 25)
 
