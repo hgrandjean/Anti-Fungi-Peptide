@@ -44,7 +44,7 @@ The plots for the peptides of a positive database and generated set in a single 
 
 fig, ax = plt.subplots()
 for a in [scores_DB, PEPTIDES["Activity score"]]:
-    sns.histplot(a, bins = 20, ax = ax, kde = True).set(title="Distribution of scores", xlabel="Scores", ylabel="Count")
+    sns.distplot(a, bins = 20, ax = ax, kde = True).set(title="Distribution of scores", xlabel="Scores", ylabel="Density")
 
 plt.legend(labels = ['Positive database', 'Generated peptides'])
 plt.show()
