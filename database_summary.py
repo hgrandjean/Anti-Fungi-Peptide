@@ -1,4 +1,4 @@
-import matplotlib
+from kmer_parser import parse_fasta_file
 import matplotlib.pyplot as plt
 from Bio import SeqIO
 from collections import defaultdict, Counter
@@ -24,12 +24,6 @@ neg_db_name = "resources/filtered_negative_db.fasta"
 fig = plt.figure()
 ax = fig.add_subplot()
 fig.subplots_adjust(top=0.5)
-
-#Parse the fasta file
-def parse_fasta_file (file_name) -> list[str]:
-    multi_fasta = [record for record in SeqIO.parse(file_name, "fasta")]
-    print(f"Ended parsing of {file_name}")
-    return multi_fasta
 
 #Set titles for the figure and the subplot, respectively
 ax.axis([0, 18, -1, 1])
