@@ -1,5 +1,5 @@
 # import all required libraries
-from kmer_parser import find_kmer
+from generate_peptide import score_kmers
 import numpy as np
 import math
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
@@ -7,9 +7,7 @@ from Bio.SeqUtils import ProtParamData
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import statsmodels.api as sm
 from sklearn.svm import SVC
-from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 
 # Selected reduction dictionary
@@ -37,43 +35,19 @@ print(
     "####################################################################################################################################################### \n \n \n"
 )
 
-# local descriptor scorinf function
-def score_kmers(pep_seq: str, r_dict: int, score_dictionary=None) -> float:
-    """
-    pep_seq: peptide sequence
-    r_dict: variable precising the reduction of the amino acid dictionary (20 AA) to a specific one (see RED dictionaries in kmer_parser.py)
-    score_dictionary: dictionary with scores and kmer sequences
-    """
+# local descriptor scoring function
 
-    if score_dictionary is None:
-        score_dictionary = score_dict
-
-    kmer_score = 0
-    size = min(len(pep_seq), 5)
-
-    if size <= 2:
-        gap = 0
-    else:
-        gap = size - 2
-
-    kmers = find_kmer(pep_seq, size, gap, reduce)  # find_kmer (sequence, kmer_size, ngap, reduce):
-
-    for kmer in kmers:
-        if kmer in score_dictionary.keys():
-            kmer_score += score_dictionary[kmer][2]
-
-    return kmer_score / len(pep_seq)
 
 
 # global descriptor scoring function
-def pep_physical_analysis(pep_seq: str) -> list[str, float, float, float]:
+def pep_hydrophobicity_analysis(pep_seq: str) -> list:
     """
     Physical analysis of peptide sequence based on residues compositions
-    arg
+    arg:
     pep_seq: peptide sequence
-    return
-    hydrophobicity: gravy (GRand AVerage of hYdrophaty) for complete peptide*
-    Alternative return : hydrophobicity_scale of the peptide with scale of 2
+    return:
+    Hydrophobicity GRAVY (GRand AVerage of hYdrophaty) for complete peptide
+    Alternative return: hydrophobicity profile of the peptide with the scale of 2
     """
     pa = ProteinAnalysis(pep_seq)
 
@@ -82,7 +56,6 @@ def pep_physical_analysis(pep_seq: str) -> list[str, float, float, float]:
     """
     hydrophobicity = pa.gravy()
     hydrophobicity_scale = pa.protein_scale(ProtParamData.kd, 2, edge=1.0)
-
     return hydrophobicity
 
 
@@ -120,7 +93,7 @@ scores = []
 hydrophobicity_profile = []
 for seq in AMPs_DB["sequence"]:
     scores.append(score_kmers(seq, r_dict=reduce, score_dictionary=score_dict))
-    hydrophobicity_profile.append(pep_physical_analysis(seq))
+    hydrophobicity_profile.append(pep_hydrophobicity_analysis(seq))
     # hydrophobicity_profile.append(calculate_moment(pep_physical_analysis(seq)))
 
 AMPs_DB["score"] = scores
@@ -170,7 +143,7 @@ for i in range(0, 1000):
   """
 
     # plt.show()
-# plot result of all performed itteration and confidence value for true and false positive discovery
+# plot result of all performed iterations and confidence value for true and false positive discovery
 df = {"pred_score_0": pred_score_0, "pred_score_1": pred_score_1}
 
 df = pd.DataFrame(df)
