@@ -6,10 +6,22 @@ import matplotlib.pyplot as plt
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from kmer_parser import parse_fasta_file
 
 # Define the color properties and databases
 PROPERTIES_AA = [["D", "E", "K", "N"], ["H", "F", "Y", "W"], ["A", "V", "L", "I", "G"]]
 COLOR_AA = ["red", "blue", "green"]
+
+"""
+The categories of the AA are set in accordance with the used reduction dictionary, with the exception of P, which is considered as a unique AA
+
+Grey: hydrophilic, negatively charged
+Blue: hydrophilic, positively charged
+Green: hydrophilic, uncharged
+Orange: hydrophobic
+Red: proline 
+"""
+
 POS_DB_NAME = "resources/filtered_positive_db.fasta"
 NEG_DB_NAME = "resources/filtered_negative_db.fasta"
 
@@ -18,6 +30,10 @@ fig = plt.figure()
 ax = fig.add_subplot()
 fig.subplots_adjust(top=0.5)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> be8c541 (refacto: change variable names and reformating)
 # Get fasta file, sort their sequinces and plot
 def sort_aa_positions(db_file: str):
     db_fastas = parse_fasta_file(db_file)
