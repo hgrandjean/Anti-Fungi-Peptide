@@ -138,3 +138,8 @@ results/kmr_temp/*
 #MacOS File
 *.DS_Store
 
+#sklearn build
+*.whl
+
+#requirements from venv
+requirements.txt
