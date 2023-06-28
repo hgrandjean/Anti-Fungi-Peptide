@@ -194,26 +194,53 @@ def score_kmers(pep_seq, r_dict: int, score_dict) -> float:
 
 
 # Computation of peptide physical properties
-def pep_physical_analysis(pep_seq) -> list[float]:
+def calculate_moment(array, angle=100):
+    """Calculates the hydrophobic dipole moment from an array of hydrophobicity
+    values. Formula defined by Eisenberg, 1982 (Nature). Returns the average
+    moment (normalized by sequence length)
+
+    uH = sqrt(sum(Hi cos(i*d))**2 + sum(Hi sin(i*d))**2),
+    where i is the amino acid index and d (delta) is an angular value in
+    degrees (100 for alpha-helix, 180 for beta-sheet).
+
+    Extracted from: https://github.com/JoaoRodrigues/hydrophobic_moment/blob/main/hydrophobic_moment.py
+
+    arg
+    array:  is a scale of hydrophobicity for peptide sequence
+    return
+    hydrophobic:  average moment based on the Eisenberg formula
+    """
+
+    sum_cos, sum_sin = 0.0, 0.0
+    for i, hv in enumerate(array):
+        rad_inc = ((i * angle) * math.pi) / 180.0
+        sum_cos += hv * math.cos(rad_inc)
+        sum_sin += hv * math.sin(rad_inc)
+    # print(sum_cos, sum_sin, rad_inc)
+
+    return math.sqrt(sum_cos ** 2 + sum_sin ** 2) / len(array)
+
+### Computation of peptide's physical properties
+def pep_physical_analysis(pep_seq: str) -> list [str, float, float, float]:
     """
     pep_seq: peptide sequence
     """
-    pa = ProteinAnalysis(str(pep_seq))
+    pa = ProteinAnalysis(pep_seq)
     helix_propensity = pa.secondary_structure_fraction()[0]
     charge = pa.charge_at_pH(7)
-
+    
     """
-    Kyte-Doolitlle hydrophobicity profile
+    Kyte-Doolitle hydrophobicity profile
     """
 
-    hydrophobicity_profile = pa.protein_scale(ProtParamData.kd, 2, edge=1.0)
+    hydrophobicity_profile = pa.protein_scale(ProtParamData.kd, 2, edge = 1.0)
 
     # Identify the minimal distance between 2 peaks
-    peaks, _ = find_peaks(hydrophobicity_profile, distance=2)
+    peaks, _ = find_peaks (hydrophobicity_profile, distance = 2)
 
     # Mean distance between hydrophilic maximums
-    periodicity = np.mean(np.diff(peaks))
-    return [pep_seq, helix_propensity * 100, charge, periodicity]
+    periodicity = np.mean (np.diff(peaks))
+    return [pep_seq, helix_propensity * 100, charge, periodicity, calculate_moment(hydrophobicity_profile) , pa.gravy() ]
 
 def generate_prob_dict_from_excel(file_name: str = PAM2_EXCEL_FILE) -> dict:
     pam2_prob_matrix = pd.read_excel(file_name)
@@ -229,11 +256,14 @@ def generate_peptides(
 ):
     Align(rich_print(Panel(f"Generation of {nb_peptide} peptides", style = "light_slate_blue", expand = False)))
     # Test
-    score_evolution = []
-    helix_propensity_evolution = []
-    charge_evolution = []
-    periodicity_evolution = []
-    peptides_generated = []
+    score_evolution: list[float] = []
+    helix_propensity_evolution: list[float] = []
+    charge_evolution: list[float] = []
+    periodicity_evolution: list[float] = []
+    hydrophobicity_moment_evolution: list[float] = []
+    gravy_evolution: list[float] = []
+    peptides_generated: list[str] = []
+    bootstrap = range(bootstrap_iterations)
 
     for p in range(0, nb_peptide):
         pep_seq = default_peptide
@@ -281,12 +311,12 @@ def generate_peptides(
         helix_propensity_evolution.append(physical_analysis[1])
         charge_evolution.append(physical_analysis[2])
         periodicity_evolution.append(physical_analysis[3])
+        hydrophobicity_moment_evolution.append(physical_analysis[4])
+        gravy_evolution.append(physical_analysis[5])
         peptides_generated.append(pep_seq)
 
-    final_df = pd.DataFrame(
-        list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution)),
-        columns=["peptide_sequence", "Activity score", "Net charge", "Hydrophobicity-based periodicity"],
-    )
+    final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution , helix_propensity_evolution ,gravy_evolution , hydrophobicity_moment_evolution)), columns = ["peptide_sequence", "activity_score" , "net_charge" , "hydrophobicity_periodicity" ,"helix_propensity","hydrophobicity_average", "hydrophobic_moment"])
+    
     rich_print(
         Align(
             Panel("Generated peptides and their respectives properties", style = "light_slate_blue", expand = False),
