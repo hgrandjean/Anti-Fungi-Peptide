@@ -305,6 +305,8 @@ def generate_peptides(
         table.add_row("Final helix probability", f"{round(physical_analysis[1], 2)}%")
         table.add_row("Final global charge Q", f"{physical_analysis[2]}")
         table.add_row("Final hydrophobicity frequency", f"{physical_analysis[3]}")
+        table.add_row("Final hydrophobicity moment", f"{physical_analysis[4]}")
+        table.add_row("Final Average hydrophobicity", f"{physical_analysis[5]}")
 
         rich_print("\n", table, "\n")
 
