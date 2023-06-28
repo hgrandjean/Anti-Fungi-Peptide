@@ -1,5 +1,7 @@
 import random
 import math
+import os
+import shutil 
 
 import numpy as np
 import pandas as pd
@@ -130,11 +132,15 @@ print(
     "\n \n \n #######################################################################################################################################################"
 )
 
+# inputs and outputs
 SCORE_FILE = "results/descriptors_activity_scores.tsv"
 PAM2_EXCEL_FILE = "resources/PAM_2_substitution_probabilities_formated.xlsx"
+output_file = 'results/generated_peptides.fasta'
+tango_dir="".join(os.getcwd() +'/tango_results/')
+tango_output="".join(tango_dir +'generated_peptides_tango.sh')
 AA_ORDER = "ARNDCQEGHILKMFPSTWYV"
 DEFAULT_PEPTIDE = "RGLRRLGRKIAHGVKKYG"
-NB_PEPTIDE = 50
+NB_PEPTIDE = 10
 NB_ITERATIONS = 1000
 
 # Selected reduction dictionary
@@ -161,6 +167,19 @@ def load_descriptors_score(score_file: str = SCORE_FILE) -> dict:
             value = [float(x) for x in value]
             score_dictionary[key] = value
     return score_dictionary
+
+def setup_directory(dir_name):
+    if os.path.exists(dir_name):
+        answer = input(f"Found {dir_name}\nAre you sure that you want to delete it? [y, n]\n")
+        if answer == "y":
+            shutil.rmtree(dir_name)
+            print(f"{dir_name} deleted.")
+        else:
+            print("Operation canceled")
+            os._exit(1)
+
+    os.makedirs(dir_name)
+    print(f"Created {dir_name}")
 
 """
 Scoring of each descriptor found in the given peptide using previously computed scores. 
@@ -252,6 +271,18 @@ def generate_prob_dict_from_excel(file_name: str = PAM2_EXCEL_FILE) -> dict:
         pam2_prob_dict[row[0]] = row[1:]
     return pam2_prob_dict
 
+def generate_fasta_file(sequences, names, output_file):
+    with open(output_file, 'w') as fasta_file:
+        for i in range(len(sequences)):
+            fasta_file.write(f'>{names[i]}\n')
+            fasta_file.write(f'{sequences[i]}\n')
+
+def generate_tango_script(peptides, names, output_file):
+    with open(output_file, 'w') as file:
+        for peptide, name in zip(peptides, names):
+            line = f'Tango P{name} nt="N" ct="N" ph="7.4" te="303" io="0.05" tf="0" stab="-4" seq="{peptide}" >> peptide_agregg.txt\n'
+            file.write(line)            
+
 def generate_peptides(
     aa_probs: dict, nb_peptide: int = NB_PEPTIDE, default_peptide: str = DEFAULT_PEPTIDE, bootstrap: int = NB_ITERATIONS
 ):
@@ -328,7 +359,12 @@ def generate_peptides(
     )
     print(final_df)
     final_df.to_excel("results/de_novo_peptide_library.xlsx")
-
+    print("Run in-vivo aggregation study at http://bioinf.uab.es/aggrescan/ using generated fasta file in results/")
+    print("Run in-vitro aggregation study using Tango algorithm using generated bash file {}".format(tango_output))
+    
+    # Generate the FASTA file
+    generate_fasta_file(peptides_generated, range(0, nb_peptide), output_file)
+    generate_tango_script(peptides_generated, range(0, nb_peptide), tango_output)
     '''
     Evolution plots
     
@@ -340,15 +376,28 @@ def generate_peptides(
     plt.show()
     '''
 
+
+
+
+
+
+
+
 if __name__ == "__main__":
     # Getting scores from CSV file
     score_dictionary = load_descriptors_score()
 
     # Import substitution probabilities from PAM2 data frame relative to mutation frequencies with conservation excluded
     pam2_probs = generate_prob_dict_from_excel()
+    
+    ### generate a directory for Tango outputs 
+    setup_directory(tango_dir)
 
     ### generation and optimisation of a peptide sequence
     generate_peptides(pam2_probs)
+    
+    
+
 
 
 
