@@ -1,4 +1,5 @@
 import random
+import math
 
 import numpy as np
 import pandas as pd
@@ -263,7 +264,7 @@ def generate_peptides(
     hydrophobicity_moment_evolution: list[float] = []
     gravy_evolution: list[float] = []
     peptides_generated: list[str] = []
-    bootstrap = range(bootstrap_iterations)
+
 
     for p in range(0, nb_peptide):
         pep_seq = default_peptide
