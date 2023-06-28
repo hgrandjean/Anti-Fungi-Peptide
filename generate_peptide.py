@@ -2,6 +2,7 @@ import random
 import math
 import os
 import shutil 
+import sys
 
 import numpy as np
 import pandas as pd
@@ -140,8 +141,8 @@ tango_dir="".join(os.getcwd() +'/tango_results/')
 tango_output="".join(tango_dir +'generated_peptides_tango.sh')
 AA_ORDER = "ARNDCQEGHILKMFPSTWYV"
 DEFAULT_PEPTIDE = "RGLRRLGRKIAHGVKKYG"
-NB_PEPTIDE = 10
-NB_ITERATIONS = 1000
+NB_PEPTIDE = int(sys.argv[1])
+NB_ITERATIONS = int(sys.argv[2])
 
 # Selected reduction dictionary
 REDUCE = 6
