@@ -79,7 +79,7 @@ if $selection; then
 fi
 
 
-read -p "Enter the path to Aggrescan results file: " input_aggrescan_path
+read -e -p "Enter the path to Aggrescan results file: " input_aggrescan_path
 # Check if the input file exists
 if [ -f "$input_aggrescan_path" ]; then
    python select_active.py  $input_aggrescan_path tango_results/reformated_aggregated_peptides.tsv  #> "$output_file"  #check for python file name   
