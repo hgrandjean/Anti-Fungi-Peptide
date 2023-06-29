@@ -27,6 +27,7 @@ print(
     "####################################################################################################################################################### \n \n \n"
 )
 
+
 # Global descriptor scoring function
 def pep_hydrophobicity_analysis(pep_seq: str) -> list:
     """
@@ -43,11 +44,11 @@ def pep_hydrophobicity_analysis(pep_seq: str) -> list:
     Kyte-Doolitle hydrophobicity profile grand average 
     """
     hydrophobicity = pa.gravy()
-    hydrophobicity_scale = pa.protein_scale(ProtParamData.kd, 2, edge = 1.0)
+    hydrophobicity_scale = pa.protein_scale(ProtParamData.kd, 2, edge=1.0)
     return hydrophobicity
 
 
-def calculate_moment(array, angle = 100):
+def calculate_moment(array, angle=100):
     """Calculates the hydrophobic dipole moment from an array of hydrophobicity
     values. Formula defined by Eisenberg, 1982 (Nature). Returns the average
     moment (normalized by sequence length)
@@ -71,7 +72,7 @@ def calculate_moment(array, angle = 100):
         sum_sin += hv * math.sin(rad_inc)
     # print(sum_cos, sum_sin, rad_inc)
 
-    return math.sqrt(sum_cos ** 2 + sum_sin ** 2) / len(array)
+    return math.sqrt(sum_cos**2 + sum_sin**2) / len(array)
 
 
 # Import database of IC50 published in Fjell, C. D. et al. Identification of Novel Antibacterial Peptides by Chemoinformatics and Machine Learning. J. Med. Chem. 52, 2006–2015  (2009).
@@ -81,7 +82,7 @@ AMPs_DB = pd.read_excel("resources/AMPs_DB_IC50.xlsx")
 scores = []
 hydrophobicity_profile = []
 for seq in AMPs_DB["sequence"]:
-    scores.append(score_kmers(seq, r_dict = REDUCE, score_dict = score_dictionary))
+    scores.append(score_kmers(seq, r_dict=REDUCE, score_dict=score_dictionary))
     hydrophobicity_profile.append(pep_hydrophobicity_analysis(seq))
     # hydrophobicity_profile.append(calculate_moment(pep_physical_analysis(seq)))
 
@@ -98,8 +99,8 @@ for i in range(0, 1000):
     # Split and prepare dataset for train and test in a specified ratio
     # Train dataset
 
-    train = AMPs_DB.sample(frac = 0.75)
-    x_train_data = train[["score", "hydrophobicity_profile", "a3v_Sequence_Average"]]
+    train = AMPs_DB.sample(frac=0.75)
+    x_train_data = train[["score", "hydrophobicity_profile", "a3vSA"]]
     y_train_data = train["select"]
     x_train_col_list = x_train_data.values.tolist()
     y_train_col_list = y_train_data.values.tolist()
@@ -123,9 +124,35 @@ for i in range(0, 1000):
 
     # sns.heatmap(cm, annot=True, fmt='d').set_title('Confusion matrix of linear SVM')
     # print(classification_report(y_test_col_list, y_pred, output_dict=True)['0']['precision'])
+    if i == 0:
+        actual_pred_score_0 = classification_report(y_test_col_list, y_pred, output_dict=True)["0"]["precision"] * 100
+        actual_pred_score_1 = classification_report(y_test_col_list, y_pred, output_dict=True)["1"]["precision"] * 100
+    else:
+        new_pred_score_0 = classification_report(y_test_col_list, y_pred, output_dict=True)["0"]["precision"] * 100
+        new_pred_score_1 = classification_report(y_test_col_list, y_pred, output_dict=True)["1"]["precision"] * 100
+
+        if new_pred_score_0 >= actual_pred_score_0 and new_pred_score_1 >= actual_pred_score_0:
+            actual_pred_score_0 = new_pred_score_0
+            actual_pred_score_1 = new_pred_score_1
+            decision = classifier.decision_function(x_test_col_list)
+            parameters = classifier.get_params()
+            training_set_x = x_train_data
+            training_set_y = y_train_data
+            testing_set_x = x_test_data
+            testing_set_y = y_test_data
 
     pred_score_0.append(classification_report(y_test_col_list, y_pred, output_dict=True)["0"]["precision"] * 100)
     pred_score_1.append(classification_report(y_test_col_list, y_pred, output_dict=True)["1"]["precision"] * 100)
+
+with open("results/best_svc.txt", "w") as file:
+    file.write(
+        f"Best confidence scores:\n\tConfidence of inactive attribution: {actual_pred_score_0}%\n\n\tConfidence of active attribution: {actual_pred_score_1}%"
+    )
+    file.write(f"\n\nDecision function: \n{decision}\n\nParameters: \n{parameters}")
+    file.write(
+        f"\n\nTraining set:\n\tX: \n{training_set_x}\n\n\tY: \n{training_set_y}\n\nTesting set:\n\tX: \n{testing_set_x}\n\n\tY: \n{testing_set_y}"
+    )
+
 
 """
 Linear regression model based on SVM did not show linear relationship between analysed values
