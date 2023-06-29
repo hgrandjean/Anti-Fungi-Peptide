@@ -141,8 +141,12 @@ tango_dir="".join(os.getcwd() +'/tango_results/')
 tango_output="".join(tango_dir +'generated_peptides_tango.sh')
 AA_ORDER = "ARNDCQEGHILKMFPSTWYV"
 DEFAULT_PEPTIDE = "RGLRRLGRKIAHGVKKYG"
-NB_PEPTIDE = int(sys.argv[1])
-NB_ITERATIONS = int(sys.argv[2])
+NB_PEPTIDE = 10
+NB_ITERATIONS = 500
+
+if len(sys.argv) > 1 :
+  NB_PEPTIDE = int(sys.argv[1])
+  NB_ITERATIONS = int(sys.argv[2])
 
 # Selected reduction dictionary
 REDUCE = 6
@@ -350,8 +354,8 @@ def generate_peptides(
         gravy_evolution.append(physical_analysis[5])
         peptides_generated.append(pep_seq)
 
-    final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution , helix_propensity_evolution ,gravy_evolution , hydrophobicity_moment_evolution)), columns = ["peptide_sequence", "activity_score" , "net_charge" , "hydrophobicity_periodicity" ,"helix_propensity","hydrophobicity_average", "hydrophobic_moment"])
-    
+    final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution , helix_propensity_evolution ,gravy_evolution , hydrophobicity_moment_evolution)), columns = ["peptide_sequence", "score" , "net_charge" , "hydrophobicity_periodicity" ,"helix_propensity","hydrophobicity_average", "hydrophobic_moment"])
+   
     rich_print(
         Align(
             Panel("Generated peptides and their respectives properties", style = "light_slate_blue", expand = False),
