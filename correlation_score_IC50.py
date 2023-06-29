@@ -8,6 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix
+import joblib
 
 # Selected reduction dictionary
 REDUCE = 6
@@ -88,7 +89,7 @@ for seq in AMPs_DB["sequence"]:
 
 AMPs_DB["score"] = scores
 AMPs_DB["log_IC50"] = np.log10(AMPs_DB["rel_IC50"])
-AMPs_DB["hydrophobicity_profile"] = hydrophobicity_profile
+AMPs_DB["hydrophobicity_average"] = hydrophobicity_profile
 
 
 # Perform multiple iteration of the SVC to see false and true positive discovery
@@ -100,14 +101,14 @@ for i in range(0, 1000):
     # Train dataset
 
     train = AMPs_DB.sample(frac=0.75)
-    x_train_data = train[["score", "hydrophobicity_profile", "a3vSA"]]
+    x_train_data = train[["score", "hydrophobicity_average", "a3vSA",'agg']]
     y_train_data = train["select"]
     x_train_col_list = x_train_data.values.tolist()
     y_train_col_list = y_train_data.values.tolist()
 
     # Test dataset
     test = AMPs_DB.drop(train.index)
-    x_test_data = test[["score", "hydrophobicity_profile", "a3v_Sequence_Average"]]
+    x_test_data = test[["score", "hydrophobicity_average", "a3vSA","agg"]]
     y_test_data = test["select"]
     x_test_col_list = x_test_data.values.tolist()
     y_test_col_list = y_test_data.values.tolist()
@@ -143,6 +144,12 @@ for i in range(0, 1000):
 
     pred_score_0.append(classification_report(y_test_col_list, y_pred, output_dict=True)["0"]["precision"] * 100)
     pred_score_1.append(classification_report(y_test_col_list, y_pred, output_dict=True)["1"]["precision"] * 100)
+
+
+# save the model to disk
+filename = 'resources/SVC_model.sav'
+joblib.dump(classifier, filename)
+
 
 with open("results/best_svc.txt", "w") as file:
     file.write(
