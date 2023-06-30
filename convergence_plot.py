@@ -376,7 +376,7 @@ def generate_peptides(
     #generate_tango_script(peptides_generated, range(0, nb_peptide), tango_output)
     
     '''
-    Evolution plots
+    Convergence plots
     '''
     
     #define dataframe 
@@ -409,7 +409,7 @@ def generate_peptides(
         plot, "lower center",
         bbox_to_anchor=(.5, 1), ncol=3, title=None, frameon=False,
     )
-    plt.savefig("results/Evolution_plot.png")
+    plt.savefig("results/Convergence_plot.png")
     
 
 
