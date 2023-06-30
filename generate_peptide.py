@@ -246,7 +246,7 @@ def calculate_moment(array, angle=100):
     return math.sqrt(sum_cos ** 2 + sum_sin ** 2) / len(array)
 
 ### Computation of peptide's physical properties
-def pep_physical_analysis(pep_seq: str) -> list [str, float, float, float]:
+def pep_physical_analysis(pep_seq: str) -> list [float]:
     """
     pep_seq: peptide sequence
     """
@@ -297,7 +297,7 @@ def generate_peptides(
     helix_propensity_evolution: list[float] = []
     charge_evolution: list[float] = []
     periodicity_evolution: list[float] = []
-    hydrophobicity_moment_evolution: list[float] = []
+    hydrophobic_moment_evolution: list[float] = []
     gravy_evolution: list[float] = []
     peptides_generated: list[str] = []
 
@@ -350,11 +350,11 @@ def generate_peptides(
         helix_propensity_evolution.append(physical_analysis[1])
         charge_evolution.append(physical_analysis[2])
         periodicity_evolution.append(physical_analysis[3])
-        hydrophobicity_moment_evolution.append(physical_analysis[4])
+        hydrophobic_moment_evolution.append(physical_analysis[4])
         gravy_evolution.append(physical_analysis[5])
         peptides_generated.append(pep_seq)
 
-    final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution , helix_propensity_evolution ,gravy_evolution , hydrophobicity_moment_evolution)), columns = ["peptide_sequence", "score" , "net_charge" , "hydrophobicity_periodicity" ,"helix_propensity","hydrophobicity_average", "hydrophobic_moment"])
+    final_df=pd.DataFrame(list(zip(peptides_generated, score_evolution, charge_evolution, periodicity_evolution , helix_propensity_evolution ,gravy_evolution , hydrophobic_moment_evolution)), columns = ["peptide_sequence", "score" , "net_charge" , "hydrophobicity_periodicity" ,"helix_propensity","hydrophobicity_average", "hydrophobic_moment"])
    
     rich_print(
         Align(
@@ -364,29 +364,12 @@ def generate_peptides(
     )
     print(final_df)
     final_df.to_excel("results/de_novo_peptide_library.xlsx")
-    print("Run in-vivo aggregation study at http://bioinf.uab.es/aggrescan/ using generated fasta file in results/")
-    print("Run in-vitro aggregation study using Tango algorithm using generated bash file {}".format(tango_output))
+    print("Run in vivo aggregation study at http://bioinf.uab.es/aggrescan/ using generated fasta file in results/")
+    print("Run in vitro aggregation study using Tango algorithm using generated bash file {}".format(tango_output))
     
     # Generate the FASTA file
     generate_fasta_file(peptides_generated, range(0, nb_peptide), output_file)
     generate_tango_script(peptides_generated, range(0, nb_peptide), tango_output)
-    '''
-    Evolution plots
-    
-    plt.plot(NB_ITERATIONS, score_evolution, label = "score")
-    plt.plot(NB_ITERATIONS, helix_propensity_evolution, label = "helix propensity")
-    plt.plot(NB_ITERATIONS, charge_evolution, label = "charge")
-    plt.plot(NB_ITERATIONS, periodicity_evolution, label = "hydrophobicity space")
-    plt.legend()
-    plt.show()
-    '''
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     # Getting scores from CSV file
