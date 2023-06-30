@@ -137,7 +137,7 @@ print(
 SCORE_FILE = "results/descriptors_activity_scores.tsv"
 PAM2_EXCEL_FILE = "resources/PAM_2_substitution_probabilities_formated.xlsx"
 output_file = 'results/generated_peptides.fasta'
-tango_dir="".join(os.getcwd() +'/tango_results/')
+tango_dir="".join(os.getcwd() +'/results/tango_results/')
 tango_output="".join(tango_dir +'generated_peptides_tango.sh')
 AA_ORDER = "ARNDCQEGHILKMFPSTWYV"
 DEFAULT_PEPTIDE = "RGLRRLGRKIAHGVKKYG"
@@ -282,7 +282,8 @@ def generate_fasta_file(sequences, names, output_file):
             fasta_file.write(f'>{names[i]}\n')
             fasta_file.write(f'{sequences[i]}\n')
 
-def generate_tango_script(peptides, names, output_file):
+def generate_tango_script(peptides: str, names: str, output_file):
+    setup_directory(tango_dir)
     with open(output_file, 'w') as file:
         for peptide, name in zip(peptides, names):
             line = f'./Tango P{name}_ nt="N" ct="N" ph="7.4" te="303" io="0.05" tf="0" stab="-4" seq="{peptide}" >> peptide_agregg.txt\n'
