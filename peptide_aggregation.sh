@@ -71,7 +71,7 @@ if $selection; then
   grep "AGG" tango_results/peptide_agregg.txt | awk '{gsub(/AGG|AMYLO|TURN|HELIX|HELAGG|BETA/,"\t",$0); print;}' > tango_results/reformated_aggregated_peptides.tsv
   sed -i '1s/^/\tAGG\tAMYLO\tTURN\tHELIX\tHELAGG\tBETA\n/' tango_results/reformated_aggregated_peptides.tsv
   echo ""
-  echo "Runned and reformated Tango in-vitro prediction"
+  echo "Runned and reformated Tango in vitro prediction"
   echo ""
   if $generate_only ; then 
     exit 1
