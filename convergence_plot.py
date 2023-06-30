@@ -1,19 +1,12 @@
 import random
-import math
 import os
 import shutil 
 
-import numpy as np
 import pandas as pd
-from Bio.SeqUtils import (
-    ProtParamData,  # Local https://github.com/biopython/biopython/blob/master/Bio/SeqUtils/ProtParamData.py
-)
-from Bio.SeqUtils.ProtParam import ProteinAnalysis
-from scipy.signal import find_peaks
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from kmer_parser import find_kmer
+from kmer_parser import setup_directory
 
 from rich import box, print as rich_print
 from rich.panel import Panel
@@ -22,8 +15,8 @@ from rich.table import Table
 from rich.align import Align
 
 from generate_peptide import default_progress
-from generate_peptide import load_descriptors_score, score_kmers, calculate_moment, pep_physical_analysis
-from generate_peptide import generate_prob_dict_from_excel
+from generate_peptide import load_descriptors_score, score_kmers, pep_physical_analysis
+from generate_peptide import generate_prob_dict_from_excel, generate_tango_script, generate_fasta_file
 
 
 print(
@@ -151,34 +144,6 @@ NB_ITERATIONS = 1000
 
 # Selected reduction dictionary
 REDUCE = 6
-
-def setup_directory(dir_name):
-    if os.path.exists(dir_name):
-        answer = input(f"Found {dir_name}\nAre you sure that you want to delete it? [y, n]\n")
-        if answer == "y":
-            shutil.rmtree(dir_name)
-            print(f"{dir_name} deleted.")
-        else:
-            print("Operation canceled")
-            os._exit(1)
-
-    os.makedirs(dir_name)
-    print(f"Created {dir_name}")
-
-def generate_fasta_file(sequences, names, output_file):
-    with open(output_file, 'w') as fasta_file:
-        for i in range(len(sequences)):
-            fasta_file.write(f'>{names[i]}\n')
-            fasta_file.write(f'{sequences[i]}\n')
-
-def generate_tango_script(peptides, names, output_file):
-
-#   Generate a directory for Tango outputs
-    setup_directory(tango_dir)
-    with open(output_file, 'w') as file:
-        for peptide, name in zip(peptides, names):
-            line = f'Tango P{name} nt="N" ct="N" ph="7.4" te="303" io="0.05" tf="0" stab="-4" seq="{peptide}" >> peptide_agregg.txt\n'
-            file.write(line)            
 
 def generate_peptides(
     aa_probs: dict, NB_PEPTIDE: int = NB_PEPTIDE, DEFAULT_PEPTIDE: str = DEFAULT_PEPTIDE, bootstrap: int = NB_ITERATIONS
