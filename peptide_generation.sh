@@ -66,10 +66,10 @@ shift "$((OPTIND-1))"
 if $selection; then
     python generate_peptide.py $npep $bootstrap #> "$output_file" 
   # run Tango on generated file peptide see http://tango.crg.es/about.jsp
-  bash tango_results/generated_peptides_tango.sh
-  mv *_.txt tango_results
-  grep "AGG" tango_results/peptide_agregg.txt | awk '{gsub(/AGG|AMYLO|TURN|HELIX|HELAGG|BETA/,"\t",$0); print;}' > tango_results/reformated_aggregated_peptides.tsv
-  sed -i '1s/^/\tAGG\tAMYLO\tTURN\tHELIX\tHELAGG\tBETA\n/' tango_results/reformated_aggregated_peptides.tsv
+  bash results/tango_results/generated_peptides_tango.sh
+  mv *_.txt results/tango_results
+  grep "AGG" results/tango_results/peptide_agregg.txt | awk '{gsub(/AGG|AMYLO|TURN|HELIX|HELAGG|BETA/,"\t",$0); print;}' > results/tango_results/reformated_aggregated_peptides.tsv
+  sed -i '1s/^/\tAGG\tAMYLO\tTURN\tHELIX\tHELAGG\tBETA\n/' results/tango_results/reformated_aggregated_peptides.tsv
   echo ""
   echo "Runned and reformated Tango in vitro prediction"
   echo ""
@@ -82,7 +82,7 @@ fi
 read -e -p "Enter the path to Aggrescan results file: " input_aggrescan_path
 # Check if the input file exists
 if [ -f "$input_aggrescan_path" ]; then
-   python select_active.py  $input_aggrescan_path tango_results/reformated_aggregated_peptides.tsv  #> "$output_file"  #check for python file name   
+   python select_active.py  $input_aggrescan_path results/tango_results/reformated_aggregated_peptides.tsv  #> "$output_file"  #check for python file name   
 else
   echo "Input file not found: $input_aggrescan_path"
   exit 1
