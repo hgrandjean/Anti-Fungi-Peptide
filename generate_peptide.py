@@ -286,7 +286,7 @@ def generate_tango_script(peptides: str, names: str, output_file):
     setup_directory(tango_dir)
     with open(output_file, 'w') as file:
         for peptide, name in zip(peptides, names):
-            line = f'./Tango P{name}_ nt="N" ct="N" ph="7.4" te="303" io="0.05" tf="0" stab="-4" seq="{peptide}" >> peptide_agregg.txt\n'
+            line = f'./Tango P{name}_ nt="N" ct="N" ph="7.4" te="303" io="0.05" tf="0" stab="-4" seq="{peptide}" >> results/tango_results/peptide_agregg.txt\n'
             file.write(line)            
 
 def generate_peptides(
