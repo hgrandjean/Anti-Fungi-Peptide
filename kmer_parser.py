@@ -50,18 +50,17 @@ reduction_dictionaries = {
 # Reduction dictionary in use
 reduce = 6
 
-# Database to be cleaned
-# dirty_neg_file_name = "uniprot_neg_db.fasta"
-dirty_pos_file_name = "resources/full_positive_db.fasta"
+'''
+When replacing databases, perform filtering with filter_database.py
+'''
 
-# Clean database containing peptides between 3 and 18 AA
-neg_fastas_file_name = "resources/filtered_negative_db.fasta"
-pos_fastas_file_name = "resources/filtered_positive_db.fasta"
+# Used databases
+filtered_pos_file_name = "resources/filtered_pos_db.fasta"
+filtered_neg_file_name = "resources/filtered_neg_db.fasta"
 
 # Temporary directories for kmers
-neg_temp_path = "".join(os.getcwd() + "/kmr_neg_temp/")
-pos_temp_path = "".join(os.getcwd() + "/kmr_pos_temp/")
-
+neg_temp_path = "".join(os.getcwd() + "/resources/kmr_neg_temp/")
+pos_temp_path = "".join(os.getcwd() + "/resources/kmr_pos_temp/")
 
 def reduce_seq(sequence: str, r_dict: int, dictionary=None) -> str:
     """Transforms sequence using AA characteristics in proteins:
@@ -143,7 +142,7 @@ def get_kmers(seq_record, r_dict, path):
             gap = 0
         else:
             gap = size - 2
-        kmers = find_kmer(sequence=seq, kmer_size=size, n_gap=gap, r_dict=r_dict)
+        kmers = find_kmer(sequence = seq, kmer_size = size, n_gap = gap, r_dict = r_dict)
         for kmer in kmers:
             save.write("".join(str(kmer + "\n")))
 
@@ -173,7 +172,7 @@ def run(fastas, folder_path, name):
     pool = mp.Pool(processes=4)
 
     # map the analyze_sequence function to the sequences
-    main = partial(get_kmers, r_dict=reduce, path=folder_path)
+    main = partial(get_kmers, r_dict = reduce, path = folder_path)
     results = pool.map(main, fastas)
 
     # close the pool and wait for the worker processes to finish
@@ -182,29 +181,12 @@ def run(fastas, folder_path, name):
 
     print(f"[{name}] Finished running")
 
-
-def clean_database(db_file_name, clean_db_file_name):
-    print(f"Cleaning {db_file_name} to keep peptides between 3 and 18")
-    multi_fasta = parse_fasta_file(db_file_name)
-    multi_fasta_size = []
-    for fasta in multi_fasta:
-        seq = fasta.seq
-        fasta.description = ""
-        if fasta.id.find("|") != -1:
-            fasta.id = "".join(fasta.id.split("|")[1])
-        if len(seq) in range(3, 19):
-            multi_fasta_size.append(fasta)
-
-    SeqIO.write(multi_fasta_size, clean_db_file_name, "fasta")
-    print(f"Output clean database in {clean_db_file_name}")
-
-
 def produce_scoring(neg_result_file_name, pos_result_file_name):
     print("Producing scores")
     with open(pos_temp_path + pos_result_file_name, "r") as pos:
         positive = pos.readlines()
-    # with open(neg_temp_path + neg_result_file_name, "r") as neg:
-    #    negative = neg.readlines()
+    with open(neg_temp_path + neg_result_file_name, "r") as neg:
+        negative = neg.readlines()
 
     """
     Counting the descriptors in positive and negative databases
@@ -218,11 +200,11 @@ def produce_scoring(neg_result_file_name, pos_result_file_name):
             kmers_counter[kmer][0] += 1
         else:
             kmers_counter[kmer] = [1, 0, 0]
-    # for kmer in negative:
-    #     if kmer in kmers_counter.keys():
-    #         kmers_counter[kmer][1] += 1
-    #     else:
-    #         kmers_counter[kmer] = [0, 1, 0]
+    for kmer in negative:
+        if kmer in kmers_counter.keys():
+            kmers_counter[kmer][1] += 1
+        else:
+            kmers_counter[kmer] = [0, 1, 0]
 
     print("Finished counting the occurrences\nStart computing scores")
     # score attribution to each descriptor
@@ -241,20 +223,16 @@ def produce_scoring(neg_result_file_name, pos_result_file_name):
 if __name__ == "__main__":
     print("Start selecting the peptides")
 
-    # Select peptides between 3 and 18 aa
-    # clean_database(dirty_neg_file_name, neg_fastas_file_name)
-    clean_database(dirty_pos_file_name, pos_fastas_file_name)
-
     # Create directories for stocking descriptors
-    # setup_directory(neg_temp_path)
+    setup_directory(neg_temp_path)
     setup_directory(pos_temp_path)
 
     # Get list of fastas
-    # neg_fastas = parse_fasta_file(neg_fastas_file_name)
-    pos_fastas = parse_fasta_file(pos_fastas_file_name)
+    neg_fastas = parse_fasta_file(filtered_neg_file_name)
+    pos_fastas = parse_fasta_file(filtered_pos_file_name)
 
     # Create descriptors for each peptide
-    # run(neg_fastas, neg_temp_path, "Negative peptides")
+    run(neg_fastas, neg_temp_path, "Negative peptides")
     run(pos_fastas, pos_temp_path, "Positive peptides")
 
     # Compute score of descriptors
